@@ -1,78 +1,99 @@
 // app/search/results.tsx
-
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { useNavigation, useRoute } from '@react-navigation/native';
-import { useRouter } from 'expo-router';
+import { View, Text, StyleSheet, FlatList } from 'react-native';
+import { useLocalSearchParams, useNavigation } from 'expo-router';
+import PlantCard from '../../components/PlantCard';
+import { supabase } from '@/lib/supbase'
 
-const router = useRouter();
-
-const handleNavigate = (plant) => {
-  router.push({
-    pathname: '/plant/detail',
-    params: {
-      plant: encodeURIComponent(JSON.stringify(plant)), // ✅ Safe for URL
-    },
-  });
-};
 
 export default function SearchResultsScreen() {
   const [results, setResults] = useState([]);
-  const route = useRoute();
+  const [loading, setLoading] = useState(true);
+  const params = useLocalSearchParams();
   const navigation = useNavigation();
-  const searchTerm = route.params?.searchTerm ?? '';
+  
+  // Get search parameters
+  const searchTerm = params.searchTerm || '';
+  const categoryId = params.categoryId ? Number(params.categoryId) : null;
 
-  // 🔽 Placeholder for fetching search results by term
+  const fetchResults = async () => {
+    setLoading(true);
+    
+    try {
+      let query = supabase
+        .from('plants')
+        .select(`
+          id, 
+          name,
+          scientific_name,
+          description,
+          water_frequency_days,
+          water_instructions,
+          light_requirements,
+          care_level,
+          image_path,
+          categories(name)
+        `)
+        .limit(20);
+
+      if (categoryId) {
+        // Search by category
+        query = query.eq('category_id', categoryId);
+      } else if (searchTerm) {
+        // Search by text
+        query = query.ilike('name', `%${searchTerm}%`);
+      }
+
+      const { data, error } = await query;
+
+      if (error) throw error;
+
+      // Add image URLs
+      const plantsWithImages = data.map(plant => ({
+        ...plant,
+        image_url: supabase.storage
+          .from('plant_images')
+          .getPublicUrl(plant.image_path).data.publicUrl
+      }));
+
+      setResults(plantsWithImages);
+    } catch (error) {
+      console.error('Search error:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchResults = async () => {
-      try {
-        const response = await fetch(`https://your-api-url.com/search?query=${searchTerm}`);
-        const data = await response.json();
-        setResults(data.results);
-      } catch (error) {
-        console.error('Failed to fetch results:', error);
-      }
-    };
-
     fetchResults();
-  }, [searchTerm]);
-
-  const handleViewDetails = (plant: any) => {
-    router.push({
-      pathname: '/plant/detail',
-      params: {
-        plant: encodeURIComponent(JSON.stringify(plant)),
-      },
-    });
-  };
+  }, [searchTerm, categoryId]);
 
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>Results for "{searchTerm}"</Text>
+      <Text style={styles.header}>
+        {categoryId 
+          ? `Category Results` 
+          : `Results for "${searchTerm}"`}
+      </Text>
 
-      <FlatList
-        data={results}
-        keyExtractor={(item, index) => index.toString()}
-        renderItem={({ item }) => (
-          <View style={styles.resultItem}>
-            <TouchableOpacity onPress={() => handleViewDetails(item)}>
-              <Text style={styles.plantName}>{item.name}</Text>
-            </TouchableOpacity>
-
-            <View style={styles.icons}>
-              <TouchableOpacity>
-                <Ionicons name="add-circle-outline" size={24} />
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => handleViewDetails(item)}>
-                <Ionicons name="information-circle-outline" size={24} />
-              </TouchableOpacity>
-            </View>
-          </View>
-        )}
-        ListEmptyComponent={<Text style={styles.placeholder}>No results found</Text>}
-      />
+      {loading ? (
+        <Text style={styles.placeholder}>Loading plants...</Text>
+      ) : (
+        <FlatList
+          data={results}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={({ item }) => (
+            <PlantCard 
+              plant={item} 
+              onPress={() => navigation.navigate('plant/detail', { plant: item })}
+            />
+          )}
+          ListEmptyComponent={
+            <Text style={styles.placeholder}>No plants found</Text>
+          }
+          contentContainerStyle={styles.listContent}
+        />
+      )}
     </View>
   );
 }
@@ -80,32 +101,23 @@ export default function SearchResultsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 60,
-    paddingHorizontal: 20,
+    paddingTop: 16,
+    paddingHorizontal: 16,
     backgroundColor: '#fff',
   },
   header: {
-    fontSize: 18,
-    marginBottom: 15,
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 16,
+    marginTop: 8,
   },
-  resultItem: {
-    paddingVertical: 12,
-    borderBottomColor: '#eee',
-    borderBottomWidth: 1,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  plantName: {
-    fontSize: 16,
-  },
-  icons: {
-    flexDirection: 'row',
-    gap: 10,
+  listContent: {
+    paddingBottom: 20,
   },
   placeholder: {
     marginTop: 20,
     color: '#888',
     textAlign: 'center',
+    fontSize: 16,
   },
 });

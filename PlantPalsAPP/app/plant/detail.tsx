@@ -18,11 +18,20 @@ type PlantDetailRouteParams = {
 };
 
 export default function PlantDetailScreen() {
-  const route = useRoute();
-  const plant = (route as { params?: PlantDetailRouteParams }).params?.plant;
+  const params = useLocalSearchParams();
+  
+  // Decode the plant data
+  const plant = params.plant 
+    ? JSON.parse(decodeURIComponent(params.plant as string)) 
+    : null;
 
-  const [plantDetails, setPlantDetails] = useState(plant || null);
-
+  if (!plant) {
+    return (
+      <View style={styles.container}>
+        <Text>Plant data not available</Text>
+      </View>
+    );
+  }
   // 🔽 Placeholder to fetch latest details by plant ID
   /*
   useEffect(() => {
