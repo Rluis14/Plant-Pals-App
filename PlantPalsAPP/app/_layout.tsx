@@ -1,29 +1,35 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
-import 'react-native-reanimated';
+//# Root layout
+// app/(tabs)/_layout.tsx
 
-import { useColorScheme } from '@/hooks/useColorScheme';
+import { Tabs } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
+import React from 'react';
 
-export default function RootLayout() {
-  const colorScheme = useColorScheme();
-  const [loaded] = useFonts({
-    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
-  });
 
-  if (!loaded) {
-    // Async font loading only occurs in development.
-    return null;
-  }
-
+export default function TabLayout() {
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="+not-found" />
-      </Stack>
-      <StatusBar style="auto" />
-    </ThemeProvider>
+    <Tabs screenOptions={{ tabBarActiveTintColor: 'green' }}>
+      <Tabs.Screen
+        name="trending"
+        options={{
+          title: 'Trending',
+          tabBarIcon: ({ color, size }) => <Ionicons name="leaf-outline" color={color} size={size} />,
+        }}
+      />
+      <Tabs.Screen
+        name="search"
+        options={{
+          title: 'Search',
+          tabBarIcon: ({ color, size }) => <Ionicons name="search-outline" color={color} size={size} />,
+        }}
+      />
+      <Tabs.Screen
+        name="mylist"
+        options={{
+          title: 'My List',
+          tabBarIcon: ({ color, size }) => <Ionicons name="heart-outline" color={color} size={size} />,
+        }}
+      />
+    </Tabs>
   );
 }
