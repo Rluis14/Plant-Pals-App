@@ -4,9 +4,14 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TextInput, FlatList, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
 
+type PlantResult = {
+  name: string;
+  // Add other properties if needed
+};
+
 export default function SearchScreen() {
   const [searchTerm, setSearchTerm] = useState('');
-  const [results, setResults] = useState([]);
+  const [results, setResults] = useState<PlantResult[]>([]);
   const router = useRouter(); // ✅ useRouter goes here
 
   // 🔽 Placeholder for future API fetch

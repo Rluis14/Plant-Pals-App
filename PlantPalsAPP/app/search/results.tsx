@@ -24,7 +24,7 @@ export default function SearchResultsScreen() {
   const searchTerm = route.params?.searchTerm ?? '';
 
   // 🔽 Placeholder for fetching search results by term
-  /*
+
   useEffect(() => {
     const fetchResults = async () => {
       try {
@@ -38,10 +38,14 @@ export default function SearchResultsScreen() {
 
     fetchResults();
   }, [searchTerm]);
-  */
 
   const handleViewDetails = (plant: any) => {
-    navigation.navigate('search/detail', { plant });
+    router.push({
+      pathname: '/plant/detail',
+      params: {
+        plant: encodeURIComponent(JSON.stringify(plant)),
+      },
+    });
   };
 
   return (
