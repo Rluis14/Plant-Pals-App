@@ -53,7 +53,7 @@ export default function MyListScreen() {
           <View style={styles.plantItem}>
             <TouchableOpacity onPress={() => handleViewPlant(item)} style={styles.row}>
               <Image
-                source={item.imageUrl ? { uri: item.imageUrl } : require('../../assets/images/plant-placeholder.png')}
+                source={item.imageUrl ? { uri: item.imageUrl } : require('../../assets/images/not.png')}
                 style={styles.image}
               />
               <Text style={styles.name}>{item.name}</Text>

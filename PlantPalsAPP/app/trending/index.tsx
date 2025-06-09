@@ -34,7 +34,7 @@ export default function TrendingScreen() {
         source={
           imageUrl 
             ? { uri: imageUrl } 
-            : require('../../assets/images/plant-sketch.png')
+            : require('../../assets/images/not.png')
         } 
         style={styles.image} 
         resizeMode="contain"

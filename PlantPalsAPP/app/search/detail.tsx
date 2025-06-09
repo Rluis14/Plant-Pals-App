@@ -41,7 +41,7 @@ export default function SearchDetailScreen() {
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.title}>{plantDetails.name}</Text>
 
-      <Image 
+      {/* <Image 
         source={
           plantDetails.imageUrl 
             ? { uri: plantDetails.imageUrl } 
@@ -49,7 +49,7 @@ export default function SearchDetailScreen() {
         }
         style={styles.image}
         resizeMode="cover"
-      />
+      /> */}
 
       <Text style={styles.description}>{plantDetails.description || 'No description available.'}</Text>
 
