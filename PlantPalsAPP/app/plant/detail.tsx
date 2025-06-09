@@ -1,46 +1,26 @@
-// app/plant/detail.tsx
-
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity, Alert } from 'react-native';
-import { useRoute } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
-import { useLocalSearchParams } from 'expo-router';
-
-// ✅ This gives you access to the passed URL params
-const { plant } = useLocalSearchParams();
-
-// ✅ Decode the string back into a usable object
-const plantStr = Array.isArray(plant) ? plant[0] : plant;
-const plantObj = plantStr ? JSON.parse(decodeURIComponent(plantStr)) : null;
-
-type PlantDetailRouteParams = {
-  plant?: any; // Replace 'any' with your actual plant type if available
-};
+import { useLocalSearchParams, useRouter } from 'expo-router';
 
 export default function PlantDetailScreen() {
-  const route = useRoute();
-  const plant = (route as { params?: PlantDetailRouteParams }).params?.plant;
+  const { plant } = useLocalSearchParams();
+  const router = useRouter();
+  const [plantDetails, setPlantDetails] = useState(null);
 
-  const [plantDetails, setPlantDetails] = useState(plant || null);
-
-  // 🔽 Placeholder to fetch latest details by plant ID
-  /*
   useEffect(() => {
-    const fetchPlantDetails = async () => {
+    if (plant) {
       try {
-        const response = await fetch(`https://your-api-url.com/plants/${plant.id}`);
-        const data = await response.json();
-        setPlantDetails(data);
+        const plantStr = Array.isArray(plant) ? plant[0] : plant;
+        const plantObj = JSON.parse(decodeURIComponent(plantStr));
+        setPlantDetails(plantObj);
       } catch (error) {
-        console.error('Failed to load plant details:', error);
+        console.error('Error parsing plant data:', error);
+        Alert.alert('Error', 'Failed to load plant details');
+        router.back();
       }
-    };
-
-    if (!plant.description) {
-      fetchPlantDetails();
     }
-  }, []);
-  */
+  }, [plant]);
 
   if (!plantDetails) {
     return (
@@ -52,26 +32,29 @@ export default function PlantDetailScreen() {
 
   const handleSetReminder = () => {
     Alert.alert("Reminder", "Watering reminder set!");
-    // Replace this with push notification or calendar integration
   };
 
   const handleSave = () => {
     Alert.alert("Saved", "This plant was added to your list.");
-    // Replace with POST to user’s saved list
+  };
+
+  const handleGoBack = () => {
+    router.back();
   };
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
+      <TouchableOpacity style={styles.backButton} onPress={handleGoBack}>
+        <Ionicons name="arrow-back" size={24} color="#2F684E" />
+      </TouchableOpacity>
+
       <Text style={styles.title}>{plantDetails.name}</Text>
 
-      {/* <Image 
-        source={
-          plantDetails.imageUrl 
-            ? { uri: plantDetails.imageUrl } 
-            : require('')
-        }
+      <Image 
+        source={require('../../assets/images/not.png')}
         style={styles.image}
-      /> */}
+        resizeMode="cover"
+      />
 
       <Text style={styles.description}>
         {plantDetails.description || 'No description provided.'}
@@ -79,12 +62,12 @@ export default function PlantDetailScreen() {
 
       <View style={styles.actions}>
         <TouchableOpacity onPress={handleSave} style={styles.iconButton}>
-          <Ionicons name="heart-outline" size={26} />
+          <Ionicons name="heart-outline" size={26} color="#2F684E" />
           <Text style={styles.buttonText}>Save</Text>
         </TouchableOpacity>
 
         <TouchableOpacity onPress={handleSetReminder} style={styles.iconButton}>
-          <Ionicons name="alarm-outline" size={26} />
+          <Ionicons name="alarm-outline" size={26} color="#2F684E" />
           <Text style={styles.buttonText}>Remind</Text>
         </TouchableOpacity>
       </View>
@@ -103,11 +86,17 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  backButton: {
+    marginTop: 40,
+    marginBottom: 20,
+    alignSelf: 'flex-start',
+  },
   title: {
     fontSize: 24,
     fontWeight: '600',
     textAlign: 'center',
     marginBottom: 15,
+    color: '#2F684E',
   },
   image: {
     width: '100%',
@@ -132,5 +121,6 @@ const styles = StyleSheet.create({
   buttonText: {
     marginTop: 6,
     fontSize: 14,
+    color: '#2F684E',
   },
 });

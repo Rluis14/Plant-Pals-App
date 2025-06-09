@@ -1,33 +1,38 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView } from 'react-native';
-import { useLocalSearchParams } from 'expo-router'; // Correct for expo-router
+import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView, Alert } from 'react-native';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 
 export default function SearchDetailScreen() {
   const { plant } = useLocalSearchParams();
-  const plantStr = Array.isArray(plant) ? plant[0] : plant;
-  const plantObj = JSON.parse(decodeURIComponent(plantStr)); // decode the passed object
+  const router = useRouter();
+  const [plantDetails, setPlantDetails] = useState(null);
 
-  const [plantDetails, setPlantDetails] = useState(plantObj || null);
-
-  // 🔽 API fetch placeholder — for getting full plant detail by ID
-  /*
   useEffect(() => {
-    const fetchPlantDetails = async () => {
+    if (plant) {
       try {
-        const response = await fetch(`https://your-api-url.com/plants/${plantObj.id}`); // REPLACE WITH ENDPOINT
-        const data = await response.json();
-        setPlantDetails(data);
+        const plantStr = Array.isArray(plant) ? plant[0] : plant;
+        const plantObj = JSON.parse(decodeURIComponent(plantStr));
+        setPlantDetails(plantObj);
       } catch (error) {
-        console.error('Error fetching plant detail:', error);
+        console.error('Error parsing plant data:', error);
+        Alert.alert('Error', 'Failed to load plant details');
+        router.back();
       }
-    };
-
-    if (!plantObj.description) {
-      fetchPlantDetails();
     }
-  }, []);
-  */
+  }, [plant]);
+
+  const handleAddToList = () => {
+    Alert.alert("Added", "Plant added to your list!");
+  };
+
+  const handleSetReminder = () => {
+    Alert.alert("Reminder", "Watering reminder set!");
+  };
+
+  const handleGoBack = () => {
+    router.back();
+  };
 
   if (!plantDetails) {
     return (
@@ -39,28 +44,28 @@ export default function SearchDetailScreen() {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
+      <TouchableOpacity style={styles.backButton} onPress={handleGoBack}>
+        <Ionicons name="arrow-back" size={24} color="#2F684E" />
+      </TouchableOpacity>
+
       <Text style={styles.title}>{plantDetails.name}</Text>
 
-      {/* <Image 
-        source={
-          plantDetails.imageUrl 
-            ? { uri: plantDetails.imageUrl } 
-            : require('../../assets/images/plant-placeholder.png')
-        }
+      <Image 
+        source={require('../../assets/images/not.png')}
         style={styles.image}
         resizeMode="cover"
-      /> */}
+      />
 
       <Text style={styles.description}>{plantDetails.description || 'No description available.'}</Text>
 
       <View style={styles.buttonRow}>
-        <TouchableOpacity style={styles.iconButton}>
-          <Ionicons name="add-circle-outline" size={28} />
+        <TouchableOpacity style={styles.iconButton} onPress={handleAddToList}>
+          <Ionicons name="add-circle-outline" size={28} color="#2F684E" />
           <Text style={styles.buttonText}>Add to My List</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.iconButton}>
-          <Ionicons name="alarm-outline" size={28} />
+        <TouchableOpacity style={styles.iconButton} onPress={handleSetReminder}>
+          <Ionicons name="alarm-outline" size={28} color="#2F684E" />
           <Text style={styles.buttonText}>Set Reminder</Text>
         </TouchableOpacity>
       </View>
@@ -79,11 +84,17 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  backButton: {
+    marginTop: 40,
+    marginBottom: 20,
+    alignSelf: 'flex-start',
+  },
   title: {
     fontSize: 24,
     fontWeight: '600',
     marginBottom: 15,
     textAlign: 'center',
+    color: '#2F684E',
   },
   image: {
     width: '100%',
@@ -108,5 +119,6 @@ const styles = StyleSheet.create({
   buttonText: {
     marginTop: 6,
     fontSize: 14,
+    color: '#2F684E',
   },
 });

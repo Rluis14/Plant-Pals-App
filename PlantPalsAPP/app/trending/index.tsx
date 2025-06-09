@@ -1,58 +1,58 @@
-// app/trending/index.tsx
-
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
 
 export default function TrendingScreen() {
-  // Placeholder state for quote and image
-  const [quote, setQuote] = useState("“To plant a garden is to believe in tomorrow.”");
+  const [quote, setQuote] = useState("To plant a garden is to believe in tomorrow.");
   const [imageUrl, setImageUrl] = useState(null);
+  const router = useRouter();
 
-  // 🔽 API call placeholder
-  /*
-  useEffect(() => {
-    const fetchTrendingPlant = async () => {
-      try {
-        const response = await fetch('https://your-api-url.com/trending-plant'); <REPLACE THIS TO ENDPOINT
-        const data = await response.json();
-        setQuote(data.quote);
-        setImageUrl(data.imageUrl);
-      } catch (error) {
-        console.error('Failed to fetch trending plant:', error);
-      }
-    };
+  const handleGoBack = () => {
+    router.back();
+  };
 
-    fetchTrendingPlant();
-  }, []);
-  */
+  const handleLike = () => {
+    console.log('Liked!');
+  };
+
+  const handleBookmark = () => {
+    console.log('Bookmarked!');
+  };
+
+  const handleShare = () => {
+    console.log('Shared!');
+  };
 
   return (
     <View style={styles.container}>
-      {/* Image — Use static fallback or API image */}
+      <View style={styles.headerContainer}>
+        <TouchableOpacity style={styles.backButton} onPress={handleGoBack}>
+          <Ionicons name="arrow-back" size={24} color="#2F684E" />
+        </TouchableOpacity>
+        <Text style={styles.header}>Trending</Text>
+      </View>
+
       <Image 
-        source={
-          imageUrl 
-            ? { uri: imageUrl } 
-            : require('../../assets/images/not.png')
-        } 
+        source={require('../../assets/images/not.png')} 
         style={styles.image} 
         resizeMode="contain"
       />
 
-      {/* Quote */}
       <Text style={styles.quote}>{quote}</Text>
 
-      {/* Icons */}
       <View style={styles.iconRow}>
-        <TouchableOpacity>
-          <Ionicons name="heart-outline" size={28} />
+        <TouchableOpacity onPress={handleLike} style={styles.iconButton}>
+          <Ionicons name="heart-outline" size={28} color="#2F684E" />
+          <Text style={styles.iconLabel}>Like</Text>
         </TouchableOpacity>
-        <TouchableOpacity>
-          <Ionicons name="bookmark-outline" size={28} />
+        <TouchableOpacity onPress={handleBookmark} style={styles.iconButton}>
+          <Ionicons name="bookmark-outline" size={28} color="#2F684E" />
+          <Text style={styles.iconLabel}>Save</Text>
         </TouchableOpacity>
-        <TouchableOpacity>
-          <Ionicons name="musical-notes-outline" size={28} />
+        <TouchableOpacity onPress={handleShare} style={styles.iconButton}>
+          <Ionicons name="share-outline" size={28} color="#2F684E" />
+          <Text style={styles.iconLabel}>Share</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -67,20 +67,45 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#fff',
   },
+  headerContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    alignSelf: 'stretch',
+    marginBottom: 30,
+  },
+  backButton: {
+    marginRight: 15,
+  },
+  header: {
+    fontSize: 20,
+    fontWeight: '600',
+    color: '#2F684E',
+  },
   image: {
     width: '90%',
     height: 300,
     marginBottom: 20,
+    borderRadius: 12,
   },
   quote: {
     fontSize: 18,
     fontStyle: 'italic',
     textAlign: 'center',
     marginBottom: 30,
+    color: '#2F684E',
+    paddingHorizontal: 20,
   },
   iconRow: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    width: '60%',
+    width: '80%',
+  },
+  iconButton: {
+    alignItems: 'center',
+  },
+  iconLabel: {
+    marginTop: 5,
+    fontSize: 12,
+    color: '#2F684E',
   },
 });

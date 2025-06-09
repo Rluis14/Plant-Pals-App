@@ -1,42 +1,25 @@
-// app/search/results.tsx
-
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { useNavigation, useRoute } from '@react-navigation/native';
-import { useRouter } from 'expo-router';
-
-const router = useRouter();
-
-const handleNavigate = (plant) => {
-  router.push({
-    pathname: '/plant/detail',
-    params: {
-      plant: encodeURIComponent(JSON.stringify(plant)), // ✅ Safe for URL
-    },
-  });
-};
+import { useLocalSearchParams, useRouter } from 'expo-router';
 
 export default function SearchResultsScreen() {
   const [results, setResults] = useState([]);
-  const route = useRoute();
-  const navigation = useNavigation();
-  const searchTerm = route.params?.searchTerm ?? '';
+  const { searchTerm } = useLocalSearchParams();
+  const router = useRouter();
 
-  // 🔽 Placeholder for fetching search results by term
-
+  // Mock data for demonstration
   useEffect(() => {
-    const fetchResults = async () => {
-      try {
-        const response = await fetch(`https://your-api-url.com/search?query=${searchTerm}`);
-        const data = await response.json();
-        setResults(data.results);
-      } catch (error) {
-        console.error('Failed to fetch results:', error);
-      }
-    };
-
-    fetchResults();
+    // Simulate API call with mock data
+    const mockResults = [
+      { id: 1, name: 'Monstera Deliciosa', description: 'Popular houseplant with split leaves' },
+      { id: 2, name: 'Snake Plant', description: 'Low maintenance succulent' },
+      { id: 3, name: 'Pothos', description: 'Trailing vine plant' },
+    ].filter(plant => 
+      plant.name.toLowerCase().includes((searchTerm as string)?.toLowerCase() || '')
+    );
+    
+    setResults(mockResults);
   }, [searchTerm]);
 
   const handleViewDetails = (plant: any) => {
@@ -54,11 +37,12 @@ export default function SearchResultsScreen() {
 
       <FlatList
         data={results}
-        keyExtractor={(item, index) => index.toString()}
+        keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
           <View style={styles.resultItem}>
             <TouchableOpacity onPress={() => handleViewDetails(item)}>
               <Text style={styles.plantName}>{item.name}</Text>
+              <Text style={styles.plantDescription}>{item.description}</Text>
             </TouchableOpacity>
 
             <View style={styles.icons}>
@@ -87,6 +71,7 @@ const styles = StyleSheet.create({
   header: {
     fontSize: 18,
     marginBottom: 15,
+    fontWeight: '600',
   },
   resultItem: {
     paddingVertical: 12,
@@ -98,6 +83,12 @@ const styles = StyleSheet.create({
   },
   plantName: {
     fontSize: 16,
+    fontWeight: '500',
+  },
+  plantDescription: {
+    fontSize: 14,
+    color: '#666',
+    marginTop: 4,
   },
   icons: {
     flexDirection: 'row',

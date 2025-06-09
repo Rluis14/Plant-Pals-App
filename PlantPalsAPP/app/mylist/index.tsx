@@ -1,35 +1,27 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import { View, Text, FlatList, StyleSheet, TouchableOpacity, Image, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 
+interface Plant {
+  id: number | string;
+  name: string;
+  imageUrl?: string;
+  description?: string;
+}
+
 export default function MyListScreen() {
-  const [savedPlants, setSavedPlants] = useState([]);
+  const [savedPlants, setSavedPlants] = useState<Plant[]>([]);
   const router = useRouter();
 
-  // 🔽 Placeholder for fetching user's saved plant list
-  /*
+  // Mock data for demonstration
   useEffect(() => {
-    const fetchSavedPlants = async () => {
-      try {
-        const response = await fetch('https://your-api-url.com/mylist'); // REPLACE WITH ENDPOINT
-        const data = await response.json();
-        setSavedPlants(data.plants); // expects an array of saved plants
-      } catch (error) {
-        console.error('Failed to fetch saved plants:', error);
-      }
-    };
-
-    fetchSavedPlants();
+    const mockPlants: Plant[] = [
+      { id: 1, name: 'Monstera Deliciosa', description: 'Popular houseplant with split leaves' },
+      { id: 2, name: 'Snake Plant', description: 'Low maintenance succulent' },
+    ];
+    setSavedPlants(mockPlants);
   }, []);
-  */
-
-  interface Plant {
-    id: number | string;
-    name: string;
-    imageUrl?: string;
-    [key: string]: any;
-  }
 
   const handleViewPlant = (plant: Plant) => {
     router.push({
@@ -38,13 +30,35 @@ export default function MyListScreen() {
     });
   };
 
-  const handleRemovePlant = (plantId) => {
-    setSavedPlants((prev) => prev.filter((p) => p.id !== plantId));
+  const handleRemovePlant = (plantId: number | string) => {
+    Alert.alert(
+      'Remove Plant',
+      'Are you sure you want to remove this plant from your list?',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Remove',
+          style: 'destructive',
+          onPress: () => {
+            setSavedPlants((prev) => prev.filter((p) => p.id !== plantId));
+          },
+        },
+      ]
+    );
+  };
+
+  const handleGoBack = () => {
+    router.back();
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>My Saved Plants</Text>
+      <View style={styles.headerContainer}>
+        <TouchableOpacity style={styles.backButton} onPress={handleGoBack}>
+          <Ionicons name="arrow-back" size={24} color="#2F684E" />
+        </TouchableOpacity>
+        <Text style={styles.header}>My Saved Plants</Text>
+      </View>
 
       <FlatList
         data={savedPlants}
@@ -53,23 +67,30 @@ export default function MyListScreen() {
           <View style={styles.plantItem}>
             <TouchableOpacity onPress={() => handleViewPlant(item)} style={styles.row}>
               <Image
-                source={item.imageUrl ? { uri: item.imageUrl } : require('../../assets/images/not.png')}
+                source={require('../../assets/images/not.png')}
                 style={styles.image}
               />
-              <Text style={styles.name}>{item.name}</Text>
+              <View style={styles.textContainer}>
+                <Text style={styles.name}>{item.name}</Text>
+                {item.description && (
+                  <Text style={styles.description}>{item.description}</Text>
+                )}
+              </View>
             </TouchableOpacity>
 
             <View style={styles.actions}>
               <TouchableOpacity onPress={() => handleViewPlant(item)}>
-                <Ionicons name="eye-outline" size={22} />
+                <Ionicons name="eye-outline" size={22} color="#2F684E" />
               </TouchableOpacity>
               <TouchableOpacity onPress={() => handleRemovePlant(item.id)}>
-                <Ionicons name="trash-outline" size={22} />
+                <Ionicons name="trash-outline" size={22} color="#e74c3c" />
               </TouchableOpacity>
             </View>
           </View>
         )}
-        ListEmptyComponent={<Text style={styles.placeholder}>You haven’t saved any plants yet.</Text>}
+        ListEmptyComponent={
+          <Text style={styles.placeholder}>You haven't saved any plants yet.</Text>
+        }
       />
     </View>
   );
@@ -82,10 +103,18 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     backgroundColor: '#fff',
   },
+  headerContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  backButton: {
+    marginRight: 15,
+  },
   header: {
     fontSize: 20,
-    fontWeight: '500',
-    marginBottom: 20,
+    fontWeight: '600',
+    color: '#2F684E',
   },
   plantItem: {
     flexDirection: 'row',
@@ -107,17 +136,27 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     backgroundColor: '#eee',
   },
+  textContainer: {
+    flex: 1,
+  },
   name: {
     fontSize: 16,
-    flexShrink: 1,
+    fontWeight: '500',
+    color: '#2F684E',
+  },
+  description: {
+    fontSize: 14,
+    color: '#666',
+    marginTop: 2,
   },
   actions: {
     flexDirection: 'row',
-    gap: 10,
+    gap: 15,
   },
   placeholder: {
     marginTop: 40,
     textAlign: 'center',
     color: '#888',
+    fontSize: 16,
   },
 });
