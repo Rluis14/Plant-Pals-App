@@ -1,8 +1,8 @@
-// File: app/(auth)/welcome.tsx
 import { LinearGradient } from 'expo-linear-gradient';
 import { Link } from 'expo-router';
 import React from 'react';
 import { Dimensions, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 
 const WelcomeScreen = () => {
   return (
@@ -13,7 +13,7 @@ const WelcomeScreen = () => {
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <View style={styles.header}>
           <Image 
-            // source={require('')} 
+            source={require('../../assets/images/plant-logo.png')} 
             resizeMode="contain" 
             style={styles.logo} 
           />
@@ -22,47 +22,39 @@ const WelcomeScreen = () => {
         </View>
 
         <View style={styles.plantContainer}>
-          {/* <Image 
-            source={require('')} 
+          <Image 
+            source={require('../../assets/images/not.png')} 
             style={styles.plantImage} 
-          /> */}
+            resizeMode="contain"
+          />
           <View style={styles.circle} />
         </View>
 
         <View style={styles.featureContainer}>
           <View style={styles.featureCard}>
-            {/* <Image 
-              source={require('')} 
-              style={styles.featureIcon} 
-            /> */}
+            <Ionicons name="leaf" size={40} color="#2F684E" style={styles.featureIcon} />
             <Text style={styles.featureText}>Discover thousands of plants</Text>
           </View>
           
           <View style={styles.featureCard}>
-            {/* <Image 
-              source={require('')} 
-              style={styles.featureIcon} 
-            /> */}
+            <Ionicons name="water" size={40} color="#2F684E" style={styles.featureIcon} />
             <Text style={styles.featureText}>Smart watering reminders</Text>
           </View>
           
           <View style={styles.featureCard}>
-            {/* <Image 
-              source={require('')} 
-              style={styles.featureIcon} 
-            /> */}
+            <Ionicons name="people" size={40} color="#2F684E" style={styles.featureIcon} />
             <Text style={styles.featureText}>Connect with plant lovers</Text>
           </View>
         </View>
 
         <View style={styles.buttonContainer}>
-          <Link href="./login" asChild>
+          <Link href="/_auth/login" asChild>
             <TouchableOpacity style={styles.primaryButton}>
               <Text style={styles.buttonText}>Login</Text>
             </TouchableOpacity>
           </Link>
           
-          <Link href="./register" asChild>
+          <Link href="/_auth/register" asChild>
             <TouchableOpacity style={styles.secondaryButton}>
               <Text style={styles.secondaryButtonText}>Create Account</Text>
             </TouchableOpacity>
@@ -138,8 +130,6 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   featureIcon: {
-    width: 40,
-    height: 40,
     marginRight: 15,
   },
   featureText: {
