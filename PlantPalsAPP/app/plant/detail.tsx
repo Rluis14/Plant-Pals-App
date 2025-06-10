@@ -48,13 +48,19 @@ export default function PlantDetailScreen() {
         <Ionicons name="arrow-back" size={24} color="#2F684E" />
       </TouchableOpacity>
 
-      <Text style={styles.title}>{plantDetails.name}</Text>
-
       <Image 
         source={require('../../assets/images/not.png')}
         style={styles.image}
         resizeMode="cover"
       />
+      
+      <Text style={styles.title}>{plantDetails.name}</Text>
+
+      {/* <Image 
+        source={require('../../assets/images/not.png')}
+        style={styles.image}
+        resizeMode="cover"
+      /> */}
 
       <Text style={styles.description}>
         {plantDetails.description || 'No description provided.'}
@@ -77,6 +83,7 @@ export default function PlantDetailScreen() {
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
     padding: 20,
     paddingBottom: 40,
     backgroundColor: '#fff',
@@ -87,11 +94,24 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   backButton: {
-    marginTop: 40,
-    marginBottom: 20,
+    //position: 'absolute',
+    zIndex: 2, // ensure it is above the image
+    padding: 7,
+    borderRadius: 20,
+    backgroundColor: '#rgba(255, 255, 255, 0.8)', // white background for better visibility
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    //shadowOpacity: 0.25,
+    //shadowRadius: 3.84,
+    elevation: 5,
+    marginTop: 50,
+    //marginLeft: 0,
+    //marginBottom: 20,
     alignSelf: 'flex-start',
   },
   title: {
+    zIndex: 2, // ensure title is above the image
+    top: 200, 
     fontSize: 24,
     fontWeight: '600',
     textAlign: 'center',
@@ -99,17 +119,32 @@ const styles = StyleSheet.create({
     color: '#2F684E',
   },
   image: {
+    position: 'absolute', // put on top of phone screen
+    zIndex: 1, // image is positioned behind the backButton
+    top: 50,
     width: '100%',
     height: 250,
-    borderRadius: 12,
+    borderRadius: 20,
     backgroundColor: '#eee',
     marginBottom: 20,
   },
   description: {
+    flex  : 1,
+    top: 200, // adjust based on image height or find another way to fix this position?
     fontSize: 16,
     color: '#444',
     lineHeight: 22,
-    marginBottom: 30,
+    //marginBottom: 30,
+    //create a box to seperate the description from the image
+    padding: 15,
+    backgroundColor: '#f9f9f9',
+    borderRadius: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+    marginBottom: 220,
   },
   actions: {
     flexDirection: 'row',
