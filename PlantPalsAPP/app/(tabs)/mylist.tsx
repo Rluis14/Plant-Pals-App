@@ -3,49 +3,127 @@ import { View, Text, FlatList, StyleSheet, TouchableOpacity, Image, Alert } from
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 
-interface Plant {
-  id: number | string;
-  name: string;
-  imageUrl?: string;
-  description?: string;
-}
-
-export default function MyListScreen() {
-  const [savedPlants, setSavedPlants] = useState<Plant[]>([]);
+function MyListScreen() {
+  const [savedPlants, setSavedPlants] = useState<SavedPlant[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const router = useRouter();
 
-  // Mock data for demonstration
+  const fetchSavedPlants = async () => {
+    try {
+      const data = await savedPlantsService.getSavedPlants();
+      setSavedPlants(data);
+    } catch (error) {
+      console.error('Error fetching saved plants:', error);
+      Alert.alert('Error', 'Failed to load your saved plants. Please try again.');
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
+  };
+
   useEffect(() => {
-    const mockPlants: Plant[] = [
-      { id: 1, name: 'Monstera Deliciosa', description: 'Popular houseplant with split leaves' },
-      { id: 2, name: 'Snake Plant', description: 'Low maintenance succulent' },
-    ];
-    setSavedPlants(mockPlants);
+    fetchSavedPlants();
   }, []);
 
-  const handleViewPlant = (plant: Plant) => {
+  const handleRefresh = () => {
+    setRefreshing(true);
+    fetchSavedPlants();
+  };
+
+  const handleViewPlant = (savedPlant: SavedPlant) => {
     router.push({
       pathname: '/plant/detail',
-      params: { plant: encodeURIComponent(JSON.stringify(plant)) },
+      params: { plant: encodeURIComponent(JSON.stringify(savedPlant.plants)) },
     });
   };
 
-  const handleRemovePlant = (plantId: number | string) => {
+  const handleRemovePlant = async (savedPlant: SavedPlant) => {
     Alert.alert(
       'Remove Plant',
-      'Are you sure you want to remove this plant from your list?',
+      `Are you sure you want to remove ${savedPlant.plants.name} from your list?`,
       [
         { text: 'Cancel', style: 'cancel' },
         {
           text: 'Remove',
           style: 'destructive',
-          onPress: () => {
-            setSavedPlants((prev) => prev.filter((p) => p.id !== plantId));
+          onPress: async () => {
+            try {
+              await savedPlantsService.removePlant(savedPlant.plant_id);
+              setSavedPlants((prev) => prev.filter((p) => p.id !== savedPlant.id));
+              Alert.alert('Success', `${savedPlant.plants.name} has been removed from your list.`);
+            } catch (error) {
+              console.error('Error removing plant:', error);
+              Alert.alert('Error', 'Failed to remove plant. Please try again.');
+            }
           },
         },
       ]
     );
   };
+
+  const renderPlantItem = ({ item }: { item: SavedPlant }) => (
+    <View style={styles.plantItem}>
+      <TouchableOpacity onPress={() => handleViewPlant(item)} style={styles.row}>
+        <View style={styles.textContainer}>
+          <Text style={styles.name}>{item.plants.name}</Text>
+          {item.plants.scientific_name && (
+            <Text style={styles.scientificName}>{item.plants.scientific_name}</Text>
+          )}
+          {item.plants.description && (
+            <Text style={styles.description} numberOfLines={2}>
+              {item.plants.description}
+            </Text>
+          )}
+          <View style={styles.plantMeta}>
+            {item.plants.categories?.name && (
+              <View style={styles.categoryTag}>
+                <Ionicons name="leaf" size={12} color="#000" />
+                <Text style={styles.categoryText}>{item.plants.categories.name}</Text>
+              </View>
+            )}
+            {item.plants.care_level && (
+              <View style={styles.careLevelTag}>
+                <Text style={styles.careLevelText}>{item.plants.care_level}</Text>
+              </View>
+            )}
+            {item.plants.water_frequency_days && (
+              <View style={styles.waterTag}>
+                <Ionicons name="water" size={12} color="#000" />
+                <Text style={styles.waterText}>{item.plants.water_frequency_days}d</Text>
+              </View>
+            )}
+          </View>
+          <Text style={styles.savedDate}>
+            Saved {new Date(item.saved_at).toLocaleDateString()}
+          </Text>
+        </View>
+      </TouchableOpacity>
+
+      <View style={styles.actions}>
+        <TouchableOpacity onPress={() => handleViewPlant(item)} style={styles.actionButton}>
+          <Ionicons name="eye-outline" size={22} color="#000" />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => handleRemovePlant(item)} style={styles.actionButton}>
+          <Ionicons name="trash-outline" size={22} color="#000" />
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
+
+  if (loading) {
+    return (
+      <View style={styles.container}>
+        <View style={styles.headerContainer}>
+          <Text style={styles.header}>My Saved Plants</Text>
+        </View>
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color="#000" />
+          <Text style={styles.loadingText}>Loading your plants...</Text>
+        </View>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -53,36 +131,32 @@ export default function MyListScreen() {
         <Text style={styles.header}>My Saved Plants</Text>
       </View>
 
-      <FlatList
+     <FlatList
         data={savedPlants}
         keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => (
-          <View style={styles.plantItem}>
-            <TouchableOpacity onPress={() => handleViewPlant(item)} style={styles.row}>
-              <Image
-                source={require('../../assets/images/not.png')}
-                style={styles.image}
-              />
-              <View style={styles.textContainer}>
-                <Text style={styles.name}>{item.name}</Text>
-                {item.description && (
-                  <Text style={styles.description}>{item.description}</Text>
-                )}
-              </View>
-            </TouchableOpacity>
-
-            <View style={styles.actions}>
-              <TouchableOpacity onPress={() => handleViewPlant(item)}>
-                <Ionicons name="eye-outline" size={22} color="#2F684E" />
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => handleRemovePlant(item.id)}>
-                <Ionicons name="trash-outline" size={22} color="#e74c3c" />
-              </TouchableOpacity>
-            </View>
-          </View>
-        )}
+        renderItem={renderPlantItem}
+        showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={handleRefresh}
+          />
+        }
         ListEmptyComponent={
-          <Text style={styles.placeholder}>You haven't saved any plants yet.</Text>
+          <View style={styles.emptyContainer}>
+            <Ionicons name="leaf-outline" size={64} color="#000" />
+            <Text style={styles.emptyTitle}>No saved plants yet</Text>
+            <Text style={styles.emptySubtitle}>
+              Search for plants and add them to your collection to see them here
+            </Text>
+            <TouchableOpacity 
+              style={styles.searchButton}
+              onPress={() => router.push('/(tabs)/search')}
+            >
+              <Ionicons name="search" size={20} color="#000" />
+              <Text style={styles.searchButtonText}>Start Searching</Text>
+            </TouchableOpacity>
+          </View>
         }
       />
     </View>
@@ -103,14 +177,30 @@ const styles = StyleSheet.create({
   header: {
     fontSize: 24,
     fontWeight: '600',
-    color: '#2F684E',
+    color: '#000',
+  },
+    subHeader: {
+    fontSize: 14,
+    marginTop: 4,
+    color: '#000',
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loadingText: {
+    marginTop: 10,
+    fontSize: 16,
+    color: '#000',
   },
   plantItem: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingVertical: 12,
-    borderBottomColor: '#eee',
+    paddingVertical: 15,
+    paddingHorizontal: 5,
+    borderBottomColor: '#ccc',
     borderBottomWidth: 1,
   },
   row: {
@@ -118,34 +208,119 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flex: 1,
   },
-  image: {
-    width: 50,
-    height: 50,
-    marginRight: 12,
-    borderRadius: 6,
-    backgroundColor: '#eee',
-  },
+  
+  //image: {
+  
   textContainer: {
     flex: 1,
   },
   name: {
-    fontSize: 16,
-    fontWeight: '500',
-    color: '#2F684E',
+    fontSize: 17,
+    fontWeight: '600',
+    color: '#000',
+  },
+  scientificName: {
+    fontSize: 13,
+    fontStyle: 'italic',
+    marginBottom: 5,
+    color: '#000',
   },
   description: {
     fontSize: 14,
     color: '#666',
     marginTop: 2,
   },
+  plantMeta: {
+    flexDirection: 'row',
+    gap: 6,
+    flexWrap: 'wrap',
+    marginBottom: 4,
+  },
+  categoryTag: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 10,
+    gap: 3,
+    backgroundColor: '#f0f0f0',
+  },
+  categoryText: {
+    fontSize: 11,
+    fontWeight: '500',
+    color: '#000',
+  },
+  careLevelTag: {
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 10,
+    backgroundColor: '#f0f0f0',
+  },
+  careLevelText: {
+    fontSize: 11,
+    fontWeight: '500',
+    color: '#000',
+  },
+  waterTag: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 10,
+    gap: 3,
+    backgroundColor: '#f0f0f0',
+  },
+  waterText: {
+    fontSize: 11,
+    fontWeight: '500',
+    color: '#000',
+  },
+  savedDate: {
+    fontSize: 12,
+    fontStyle: 'italic',
+    color: '#000',
+  },
   actions: {
     flexDirection: 'row',
-    gap: 15,
+    gap: 10,
   },
-  placeholder: {
-    marginTop: 40,
-    textAlign: 'center',
-    color: '#888',
+  actionButton: {
+    padding: 8,
+  },
+  emptyContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 80,
+    paddingHorizontal: 40,
+  },
+  emptyTitle: {
+    fontSize: 22,
+    fontWeight: '600',
+    marginTop: 20,
+    marginBottom: 10,
+    color: '#000',
+  },
+  emptySubtitle: {
     fontSize: 16,
+    textAlign: 'center',
+    lineHeight: 22,
+    marginBottom: 30,
+    color: '#000',
+  },
+  searchButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+    borderRadius: 25,
+    gap: 8,
+    backgroundColor: '#f0f0f0',
+  },
+  searchButtonText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#000',
   },
 });
+
+export default MyListScreen;
