@@ -1,9 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TextInput, FlatList, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TextInput, FlatList, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { supabase, Plant, savedPlantsService } from '../../lib/supabase';
 
+function SearchScreen() {
+  const [searchTerm, setSearchTerm] = useState('');
+  const [results, setResults] = useState<Plant[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [hasSearched, setHasSearched] = useState(false);
+  const [savedPlantIds, setSavedPlantIds] = useState<Set<number>>(new Set());
+  const router = useRouter();
 
   const searchPlants = async (query: string) => {
     if (!query.trim()) {
@@ -105,8 +112,8 @@ import { supabase, Plant, savedPlantsService } from '../../lib/supabase';
 
   const renderPlantItem = ({ item }: { item: Plant }) => {
     const isSaved = savedPlantIds.has(item.id);
-
-  return (
+    
+    return (
       <View style={styles.resultItem}>
         <TouchableOpacity 
           style={styles.plantInfo}
@@ -159,7 +166,7 @@ import { supabase, Plant, savedPlantsService } from '../../lib/supabase';
       </View>
     );
   };
-    
+
   return (
     <View style={styles.container}>
       <View style={styles.headerContainer}>
@@ -219,9 +226,9 @@ import { supabase, Plant, savedPlantsService } from '../../lib/supabase';
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#fff',
     paddingTop: 60,
     paddingHorizontal: 20,
-    backgroundColor: '#fff',
   },
   headerContainer: {
     alignItems: 'center',
@@ -235,6 +242,7 @@ const styles = StyleSheet.create({
   instructions: {
     fontSize: 16,
     marginBottom: 20,
+    textAlign: 'center',
     color: '#000',
   },
   searchContainer: {

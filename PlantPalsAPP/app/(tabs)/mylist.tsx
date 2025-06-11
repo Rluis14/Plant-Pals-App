@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, StyleSheet, TouchableOpacity, Image, Alert } from 'react-native';
+import { View, Text, FlatList, StyleSheet, TouchableOpacity, Alert, ActivityIndicator, RefreshControl } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
+import { savedPlantsService, SavedPlant } from '../../lib/supabase';
 
 function MyListScreen() {
   const [savedPlants, setSavedPlants] = useState<SavedPlant[]>([]);
@@ -129,9 +130,10 @@ function MyListScreen() {
     <View style={styles.container}>
       <View style={styles.headerContainer}>
         <Text style={styles.header}>My Saved Plants</Text>
+        <Text style={styles.subHeader}>{savedPlants.length} plants in your collection</Text>
       </View>
 
-     <FlatList
+      <FlatList
         data={savedPlants}
         keyExtractor={(item) => item.id.toString()}
         renderItem={renderPlantItem}
@@ -166,9 +168,9 @@ function MyListScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#fff',
     paddingTop: 60,
     paddingHorizontal: 20,
-    backgroundColor: '#fff',
   },
   headerContainer: {
     alignItems: 'center',
@@ -179,7 +181,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#000',
   },
-    subHeader: {
+  subHeader: {
     fontSize: 14,
     marginTop: 4,
     color: '#000',
@@ -200,23 +202,21 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 15,
     paddingHorizontal: 5,
-    borderBottomColor: '#ccc',
     borderBottomWidth: 1,
+    borderBottomColor: '#ccc',
   },
   row: {
     flexDirection: 'row',
     alignItems: 'center',
     flex: 1,
   },
-  
-  //image: {
-  
   textContainer: {
     flex: 1,
   },
   name: {
     fontSize: 17,
     fontWeight: '600',
+    marginBottom: 3,
     color: '#000',
   },
   scientificName: {
@@ -227,8 +227,9 @@ const styles = StyleSheet.create({
   },
   description: {
     fontSize: 14,
-    color: '#666',
-    marginTop: 2,
+    marginBottom: 8,
+    lineHeight: 18,
+    color: '#000',
   },
   plantMeta: {
     flexDirection: 'row',

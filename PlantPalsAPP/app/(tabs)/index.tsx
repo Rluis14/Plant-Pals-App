@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 export default function TrendingScreen() {
   const [quote, setQuote] = useState("To plant a garden is to believe in tomorrow.");
-  const [imageUrl, setImageUrl] = useState(null);
 
   const handleLike = () => {
     console.log('Liked!');
@@ -24,7 +23,7 @@ export default function TrendingScreen() {
         <Text style={styles.header}>Trending</Text>
       </View>
 
-       <Text style={styles.quote}>{quote}</Text>
+      <Text style={styles.quote}>{quote}</Text>
 
       <View style={styles.iconRow}>
         <TouchableOpacity onPress={handleLike} style={styles.iconButton}>
@@ -47,10 +46,10 @@ export default function TrendingScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#fff',
     paddingTop: 60,
     paddingHorizontal: 20,
     alignItems: 'center',
-    backgroundColor: '#fff',
   },
   headerContainer: {
     alignSelf: 'stretch',
@@ -62,15 +61,13 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#000',
   },
-  //image: {
-
   quote: {
     fontSize: 18,
     fontStyle: 'italic',
     textAlign: 'center',
     marginBottom: 30,
-    color: '#000',
     paddingHorizontal: 20,
+    color: '#000',
   },
   iconRow: {
     flexDirection: 'row',

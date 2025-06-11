@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Plant, savedPlantsService } from '../../lib/supabase';
-
 
 export default function PlantDetailScreen() {
   const { plant } = useLocalSearchParams();
@@ -18,9 +17,8 @@ export default function PlantDetailScreen() {
         const plantStr = Array.isArray(plant) ? plant[0] : plant;
         const plantObj = JSON.parse(decodeURIComponent(plantStr));
         setPlantDetails(plantObj);
-
+        
         checkSavedStatus(plantObj.id);
-        //debug
       } catch (error) {
         console.error('Error parsing plant data:', error);
         Alert.alert('Error', 'Failed to load plant details');
@@ -29,7 +27,7 @@ export default function PlantDetailScreen() {
     }
   }, [plant]);
 
-   const checkSavedStatus = async (plantId: number) => {
+  const checkSavedStatus = async (plantId: number) => {
     try {
       const saved = await savedPlantsService.isPlantSaved(plantId);
       setIsSaved(saved);
@@ -66,14 +64,14 @@ export default function PlantDetailScreen() {
 
   if (!plantDetails) {
     return (
-     <View style={styles.center}>
+      <View style={styles.center}>
         <Text style={styles.loadingText}>Loading plant details...</Text>
       </View>
     );
   }
 
   const handleSetReminder = () => {
-   if (plantDetails.water_frequency_days) {
+    if (plantDetails.water_frequency_days) {
       Alert.alert(
         "Watering Reminder", 
         `Reminder set! Water your ${plantDetails.name} every ${plantDetails.water_frequency_days} days.`
@@ -86,7 +84,7 @@ export default function PlantDetailScreen() {
   const handleGoBack = () => {
     router.back();
   };
-  
+
   const getLightIcon = (lightRequirement: string) => {
     switch (lightRequirement?.toLowerCase()) {
       case 'low': return 'moon';
@@ -96,7 +94,7 @@ export default function PlantDetailScreen() {
       default: return 'bulb';
     }
   };
-  
+
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
       <View style={styles.header}>
@@ -214,14 +212,14 @@ export default function PlantDetailScreen() {
 
 const styles = StyleSheet.create({
   container: {
-    padding: 20,
-    paddingBottom: 40,
+    flex: 1,
     backgroundColor: '#fff',
   },
   center: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: '#fff',
   },
   loadingText: {
     color: '#000',
@@ -237,7 +235,7 @@ const styles = StyleSheet.create({
   backButton: {
     padding: 8,
   },
-    headerActions: {
+  headerActions: {
     flexDirection: 'row',
     gap: 10,
   },
