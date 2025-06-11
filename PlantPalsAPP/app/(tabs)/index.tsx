@@ -24,25 +24,19 @@ export default function TrendingScreen() {
         <Text style={styles.header}>Trending</Text>
       </View>
 
-      <Image 
-        source={require('../../assets/images/not.png')} 
-        style={styles.image} 
-        resizeMode="contain"
-      />
-
-      <Text style={styles.quote}>{quote}</Text>
+       <Text style={styles.quote}>{quote}</Text>
 
       <View style={styles.iconRow}>
         <TouchableOpacity onPress={handleLike} style={styles.iconButton}>
-          <Ionicons name="heart-outline" size={28} color="#2F684E" />
+          <Ionicons name="heart-outline" size={28} color="#000" />
           <Text style={styles.iconLabel}>Like</Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={handleBookmark} style={styles.iconButton}>
-          <Ionicons name="bookmark-outline" size={28} color="#2F684E" />
+          <Ionicons name="bookmark-outline" size={28} color="#000" />
           <Text style={styles.iconLabel}>Save</Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={handleShare} style={styles.iconButton}>
-          <Ionicons name="share-outline" size={28} color="#2F684E" />
+          <Ionicons name="share-outline" size={28} color="#000" />
           <Text style={styles.iconLabel}>Share</Text>
         </TouchableOpacity>
       </View>
@@ -66,20 +60,16 @@ const styles = StyleSheet.create({
   header: {
     fontSize: 24,
     fontWeight: '600',
-    color: '#2F684E',
+    color: '#000',
   },
-  image: {
-    width: '90%',
-    height: 300,
-    marginBottom: 20,
-    borderRadius: 12,
-  },
+  //image: {
+
   quote: {
     fontSize: 18,
     fontStyle: 'italic',
     textAlign: 'center',
     marginBottom: 30,
-    color: '#2F684E',
+    color: '#000',
     paddingHorizontal: 20,
   },
   iconRow: {
@@ -93,6 +83,6 @@ const styles = StyleSheet.create({
   iconLabel: {
     marginTop: 5,
     fontSize: 12,
-    color: '#2F684E',
+    color: '#000',
   },
 });
