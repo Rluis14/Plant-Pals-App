@@ -67,12 +67,6 @@ const LoginScreen = () => {
                   style={styles.showPasswordButton}
                   onPress={() => setShowPassword(!showPassword)}
                 >
-                  <Image
-                    source={showPassword
-                      ? require('@/assets/images/showeye.png')
-                      : require('@/assets/images/hideeye.png')
-                    }
-                    style={styles.eyeIcon}
                   <Ionicons 
                     name={showPassword ? "eye-off" : "eye"} 
                     size={24} 
@@ -285,6 +279,11 @@ const styles = StyleSheet.create({
   footerLink: {
     color: '#66D9EF',
     fontWeight: 'bold',
+  },
+  socialIcon: {
+    width: 28,
+    height: 28,
+    resizeMode: 'contain',
   },
 });
 
