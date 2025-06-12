@@ -80,13 +80,13 @@ const RegisterScreen = () => {
                   style={styles.showPasswordButton}
                   onPress={() => setShowPassword(!showPassword)}
                 >
-                  {/* <Image 
+                  <Image 
                     source={showPassword 
-                      ? require('') 
-                      : require('')
+                      ? require('@/assets/images/showeye.png') 
+                      : require('@/assets/images/hideeye.png')
                     } 
                     style={styles.eyeIcon} 
-                  /> */}
+                  />
                 </TouchableOpacity>
               </View>
             </View>
@@ -106,13 +106,13 @@ const RegisterScreen = () => {
                   style={styles.showPasswordButton}
                   onPress={() => setShowPassword(!showPassword)}
                 >
-                  {/* <Image 
+                  <Image 
                     source={showPassword 
-                      ? require('') 
-                      : require('')
+                      ? require('@/assets/images/showeye.png') 
+                      : require('@/assets/images/hideeye.png')
                     } 
                     style={styles.eyeIcon} 
-                  /> */}
+                  />
                 </TouchableOpacity>
               </View>
               {!passwordsMatch && confirmPassword.length > 0 && (

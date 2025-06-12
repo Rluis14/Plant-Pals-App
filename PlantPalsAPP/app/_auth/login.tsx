@@ -63,13 +63,13 @@ const LoginScreen = () => {
                   style={styles.showPasswordButton}
                   onPress={() => setShowPassword(!showPassword)}
                 >
-                  {/* <Image
+                  <Image
                     source={showPassword
-                      ? require('')
-                      : require('')
+                      ? require('@/assets/images/showeye.png')
+                      : require('@/assets/images/hideeye.png')
                     }
                     style={styles.eyeIcon}
-                  /> */}
+                  />
                 </TouchableOpacity>
               </View>
             </View>
@@ -94,22 +94,28 @@ const LoginScreen = () => {
 
             <View style={styles.socialContainer}>
               <TouchableOpacity style={styles.socialButton}>
-                {/* <Image
-                  source={require('')}
+                <Image
+                  source={require('@/assets/images/google.png')}
                   style={styles.socialIcon}
-                /> */}
+                />
               </TouchableOpacity>
               <TouchableOpacity style={styles.socialButton}>
-                {/* <Image
-                  source={require('')}
+                <Image
+                  source={require('@/assets/images/facebook.png')}
                   style={styles.socialIcon}
-                /> */}
+                />
               </TouchableOpacity>
               <TouchableOpacity style={styles.socialButton}>
-                {/* <Image
-                  source={require('')}
+                <Image
+                  source={require('@/assets/images/icloud.png')}
                   style={styles.socialIcon}
-                /> */}
+                />
+              </TouchableOpacity>
+                <TouchableOpacity style={styles.socialButton}>
+                <Image
+                  source={require('@/assets/images/microsoft.png')}
+                  style={styles.socialIcon}
+                />
               </TouchableOpacity>
             </View>
           </View>
