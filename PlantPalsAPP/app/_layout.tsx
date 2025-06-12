@@ -32,7 +32,6 @@ export default function RootLayout() {
         <Stack.Screen name="index" />
         <Stack.Screen name="_auth" />
         <Stack.Screen name="(tabs)" />
-        <Stack.Screen name="search" />
         <Stack.Screen name="plant" />
         <Stack.Screen name="+not-found" />
       </Stack>
