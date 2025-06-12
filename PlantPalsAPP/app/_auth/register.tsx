@@ -1,8 +1,8 @@
-// File: app/(auth)/register.tsx
 import { Link, router } from 'expo-router';
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, Image, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, Image, KeyboardAvoidingView, Platform, ScrollView, Alert } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { Ionicons } from '@expo/vector-icons';
 
 const RegisterScreen = () => {
   const [name, setName] = useState('');
@@ -12,7 +12,16 @@ const RegisterScreen = () => {
   const [showPassword, setShowPassword] = useState(false);
   
   const handleRegister = () => {
-    // Registration logic would go here
+    if (!name || !email || !password || !confirmPassword) {
+      Alert.alert('Error', 'Please fill in all fields');
+      return;
+    }
+    
+    if (password !== confirmPassword) {
+      Alert.alert('Error', 'Passwords do not match');
+      return;
+    }
+    
     console.log('Registering:', name, email, password);
     router.replace('/(tabs)');
   };
@@ -32,7 +41,7 @@ const RegisterScreen = () => {
         <ScrollView contentContainerStyle={styles.scrollContainer}>
           <View style={styles.header}>
             <Image 
-              // source={require('')} 
+              source={require('../../assets/images/plant-logo.png')} 
               style={styles.logo} 
             />
             <Text style={styles.title}>Create Account</Text>
@@ -80,12 +89,10 @@ const RegisterScreen = () => {
                   style={styles.showPasswordButton}
                   onPress={() => setShowPassword(!showPassword)}
                 >
-                  <Image 
-                    source={showPassword 
-                      ? require('@/assets/images/showeye.png') 
-                      : require('@/assets/images/hideeye.png')
-                    } 
-                    style={styles.eyeIcon} 
+                  <Ionicons 
+                    name={showPassword ? "eye-off" : "eye"} 
+                    size={24} 
+                    color="#A67B5B" 
                   />
                 </TouchableOpacity>
               </View>
@@ -106,12 +113,10 @@ const RegisterScreen = () => {
                   style={styles.showPasswordButton}
                   onPress={() => setShowPassword(!showPassword)}
                 >
-                  <Image 
-                    source={showPassword 
-                      ? require('@/assets/images/showeye.png') 
-                      : require('@/assets/images/hideeye.png')
-                    } 
-                    style={styles.eyeIcon} 
+                  <Ionicons 
+                    name={showPassword ? "eye-off" : "eye"} 
+                    size={24} 
+                    color="#A67B5B" 
                   />
                 </TouchableOpacity>
               </View>
@@ -218,10 +223,6 @@ const styles = StyleSheet.create({
     position: 'absolute',
     right: 15,
     padding: 10,
-  },
-  eyeIcon: {
-    width: 24,
-    height: 24,
   },
   errorText: {
     color: '#e74c3c',

@@ -1,8 +1,8 @@
-// File: app/(auth)/login.tsx
 import { Link, router } from 'expo-router';
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, Image, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, Image, KeyboardAvoidingView, Platform, ScrollView, Alert } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { Ionicons } from '@expo/vector-icons';
 
 const LoginScreen = () => {
   const [email, setEmail] = useState('');
@@ -10,7 +10,11 @@ const LoginScreen = () => {
   const [showPassword, setShowPassword] = useState(false);
 
   const handleLogin = () => {
-    // Login logic would go here
+    if (!email || !password) {
+      Alert.alert('Error', 'Please fill in all fields');
+      return;
+    }
+    
     console.log('Logging in with:', email, password);
     router.replace('/(tabs)');
   };
@@ -26,10 +30,10 @@ const LoginScreen = () => {
       >
         <ScrollView contentContainerStyle={styles.scrollContainer}>
           <View style={styles.header}>
-            {/* <Image
-              source={require('')}
+            <Image
+              source={require('../../assets/images/plant-logo.png')}
               style={styles.logo}
-            /> */}
+            />
             <Text style={styles.title}>Welcome Back!</Text>
             <Text style={styles.subtitle}>Let's get back to your plant journey</Text>
           </View>
@@ -63,12 +67,10 @@ const LoginScreen = () => {
                   style={styles.showPasswordButton}
                   onPress={() => setShowPassword(!showPassword)}
                 >
-                  <Image
-                    source={showPassword
-                      ? require('@/assets/images/showeye.png')
-                      : require('@/assets/images/hideeye.png')
-                    }
-                    style={styles.eyeIcon}
+                  <Ionicons 
+                    name={showPassword ? "eye-off" : "eye"} 
+                    size={24} 
+                    color="#A67B5B" 
                   />
                 </TouchableOpacity>
               </View>
@@ -94,28 +96,13 @@ const LoginScreen = () => {
 
             <View style={styles.socialContainer}>
               <TouchableOpacity style={styles.socialButton}>
-                <Image
-                  source={require('@/assets/images/google.png')}
-                  style={styles.socialIcon}
-                />
+                <Ionicons name="logo-google" size={24} color="#4285F4" />
               </TouchableOpacity>
               <TouchableOpacity style={styles.socialButton}>
-                <Image
-                  source={require('@/assets/images/facebook.png')}
-                  style={styles.socialIcon}
-                />
+                <Ionicons name="logo-apple" size={24} color="#000" />
               </TouchableOpacity>
               <TouchableOpacity style={styles.socialButton}>
-                <Image
-                  source={require('@/assets/images/icloud.png')}
-                  style={styles.socialIcon}
-                />
-              </TouchableOpacity>
-                <TouchableOpacity style={styles.socialButton}>
-                <Image
-                  source={require('@/assets/images/microsoft.png')}
-                  style={styles.socialIcon}
-                />
+                <Ionicons name="logo-facebook" size={24} color="#1877F2" />
               </TouchableOpacity>
             </View>
           </View>
@@ -202,10 +189,6 @@ const styles = StyleSheet.create({
     right: 15,
     padding: 10,
   },
-  eyeIcon: {
-    width: 24,
-    height: 24,
-  },
   forgotPassword: {
     alignSelf: 'flex-end',
     marginBottom: 25,
@@ -260,10 +243,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     elevation: 2,
-  },
-  socialIcon: {
-    width: 30,
-    height: 30,
   },
   footer: {
     flexDirection: 'row',
