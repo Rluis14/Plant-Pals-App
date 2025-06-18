@@ -23,7 +23,7 @@ const WelcomeScreen = () => {
 
         <View style={styles.plantContainer}>
           <Image 
-            source={require('../../assets/images/not.png')} 
+            source={require('../../assets/gifs/WateringCat.gif')} 
             style={styles.plantImage} 
             resizeMode="contain"
           />
