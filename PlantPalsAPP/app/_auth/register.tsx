@@ -1,8 +1,8 @@
-// File: app/(auth)/register.tsx
 import { Link, router } from 'expo-router';
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, Image, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, ScrollView, Alert } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useAuth } from '../../contexts/AuthContext';
 
 const RegisterScreen = () => {
   const [name, setName] = useState('');
@@ -10,15 +10,60 @@ const RegisterScreen = () => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const { signUp } = useAuth();
   
-  const handleRegister = () => {
-    // Registration logic would go here
-    console.log('Registering:', name, email, password);
-    router.replace('/(tabs)');
+  const validateEmail = (email: string) => {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  };
+
+  const validatePassword = (password: string) => {
+    return password.length >= 8;
+  };
+
+  const handleRegister = async () => {
+    if (!name || !email || !password || !confirmPassword) {
+      Alert.alert('Error', 'Please fill in all fields');
+      return;
+    }
+
+    if (!validateEmail(email)) {
+      Alert.alert('Error', 'Please enter a valid email address');
+      return;
+    }
+
+    if (!validatePassword(password)) {
+      Alert.alert('Error', 'Password must be at least 8 characters long');
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      Alert.alert('Error', 'Passwords do not match');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      await signUp({ email, password, fullName: name });
+      Alert.alert(
+        'Success', 
+        'Account created successfully! Please check your email to verify your account.',
+        [
+          {
+            text: 'OK',
+            onPress: () => router.replace('/_auth/login')
+          }
+        ]
+      );
+    } catch (error: any) {
+      Alert.alert('Registration Error', error.message || 'Failed to create account');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const passwordsMatch = password === confirmPassword;
-  const isFormValid = name && email && password && confirmPassword && passwordsMatch;
+  const isFormValid = name && email && password && confirmPassword && passwordsMatch && validateEmail(email) && validatePassword(password);
 
   return (
     <LinearGradient 
@@ -31,10 +76,6 @@ const RegisterScreen = () => {
       >
         <ScrollView contentContainerStyle={styles.scrollContainer}>
           <View style={styles.header}>
-            <Image 
-              // source={require('')} 
-              style={styles.logo} 
-            />
             <Text style={styles.title}>Create Account</Text>
             <Text style={styles.subtitle}>Join our plant-loving community</Text>
           </View>
@@ -49,6 +90,7 @@ const RegisterScreen = () => {
                 value={name}
                 onChangeText={setName}
                 autoCapitalize="words"
+                autoComplete="name"
               />
             </View>
 
@@ -62,6 +104,7 @@ const RegisterScreen = () => {
                 onChangeText={setEmail}
                 keyboardType="email-address"
                 autoCapitalize="none"
+                autoComplete="email"
               />
             </View>
 
@@ -75,20 +118,20 @@ const RegisterScreen = () => {
                   secureTextEntry={!showPassword}
                   value={password}
                   onChangeText={setPassword}
+                  autoComplete="password-new"
                 />
                 <TouchableOpacity 
                   style={styles.showPasswordButton}
                   onPress={() => setShowPassword(!showPassword)}
                 >
-                  {/* <Image 
-                    source={showPassword 
-                      ? require('') 
-                      : require('')
-                    } 
-                    style={styles.eyeIcon} 
-                  /> */}
+                  <Text style={styles.showPasswordText}>
+                    {showPassword ? 'Hide' : 'Show'}
+                  </Text>
                 </TouchableOpacity>
               </View>
+              {password && !validatePassword(password) && (
+                <Text style={styles.errorText}>Password must be at least 8 characters</Text>
+              )}
             </View>
 
             <View style={styles.inputGroup}>
@@ -101,18 +144,15 @@ const RegisterScreen = () => {
                   secureTextEntry={!showPassword}
                   value={confirmPassword}
                   onChangeText={setConfirmPassword}
+                  autoComplete="password-new"
                 />
                 <TouchableOpacity 
                   style={styles.showPasswordButton}
                   onPress={() => setShowPassword(!showPassword)}
                 >
-                  {/* <Image 
-                    source={showPassword 
-                      ? require('') 
-                      : require('')
-                    } 
-                    style={styles.eyeIcon} 
-                  /> */}
+                  <Text style={styles.showPasswordText}>
+                    {showPassword ? 'Hide' : 'Show'}
+                  </Text>
                 </TouchableOpacity>
               </View>
               {!passwordsMatch && confirmPassword.length > 0 && (
@@ -121,11 +161,13 @@ const RegisterScreen = () => {
             </View>
 
             <TouchableOpacity 
-              style={[styles.registerButton, !isFormValid && styles.disabledButton]}
+              style={[styles.registerButton, (!isFormValid || loading) && styles.disabledButton]}
               onPress={handleRegister}
-              disabled={!isFormValid}
+              disabled={!isFormValid || loading}
             >
-              <Text style={styles.registerButtonText}>Create Account</Text>
+              <Text style={styles.registerButtonText}>
+                {loading ? 'Creating Account...' : 'Create Account'}
+              </Text>
             </TouchableOpacity>
 
             <View style={styles.termsContainer}>
@@ -167,11 +209,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 40,
     marginBottom: 20,
-  },
-  logo: {
-    width: 70,
-    height: 70,
-    marginBottom: 15,
   },
   title: {
     fontSize: 28,
@@ -219,9 +256,9 @@ const styles = StyleSheet.create({
     right: 15,
     padding: 10,
   },
-  eyeIcon: {
-    width: 24,
-    height: 24,
+  showPasswordText: {
+    color: '#66D9EF',
+    fontWeight: '500',
   },
   errorText: {
     color: '#e74c3c',

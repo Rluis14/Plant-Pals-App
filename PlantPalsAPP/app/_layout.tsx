@@ -1,35 +1,47 @@
-//# Root layout
-// app/(tabs)/_layout.tsx
+import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
+import { useFonts } from 'expo-font';
+import { Stack } from 'expo-router';
+import * as SplashScreen from 'expo-splash-screen';
+import { StatusBar } from 'expo-status-bar';
+import { useEffect } from 'react';
+import 'react-native-reanimated/lib/reanimated2/js-reanimated';
 
-import { Tabs } from 'expo-router';
-import { Ionicons } from '@expo/vector-icons';
-import React from 'react';
+import { useColorScheme } from '@/hooks/useColorScheme';
+import { AuthProvider } from '../contexts/AuthContext';
 
+// Prevent the splash screen from auto-hiding before asset loading is complete.
+SplashScreen.preventAutoHideAsync();
 
-export default function TabLayout() {
+export default function RootLayout() {
+  const colorScheme = useColorScheme();
+  const [loaded] = useFonts({
+    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
+  });
+
+  useEffect(() => {
+    if (loaded) {
+      SplashScreen.hideAsync();
+    }
+  }, [loaded]);
+
+  if (!loaded) {
+    return null;
+  }
+
   return (
-    <Tabs screenOptions={{ tabBarActiveTintColor: 'green' }}>
-      <Tabs.Screen
-        name="trending"
-        options={{
-          title: 'Trending',
-          tabBarIcon: ({ color, size }) => <Ionicons name="leaf-outline" color={color} size={size} />,
-        }}
-      />
-      <Tabs.Screen
-        name="search"
-        options={{
-          title: 'Search',
-          tabBarIcon: ({ color, size }) => <Ionicons name="search-outline" color={color} size={size} />,
-        }}
-      />
-      <Tabs.Screen
-        name="mylist"
-        options={{
-          title: 'My List',
-          tabBarIcon: ({ color, size }) => <Ionicons name="heart-outline" color={color} size={size} />,
-        }}
-      />
-    </Tabs>
+    <AuthProvider>
+      <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+        <Stack>
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen name="_auth" options={{ headerShown: false }} />
+          <Stack.Screen name="search" options={{ headerShown: false }} />
+          <Stack.Screen name="plant" options={{ headerShown: false }} />
+          <Stack.Screen name="mylist" options={{ headerShown: false }} />
+          <Stack.Screen name="trending" options={{ headerShown: false }} />
+          <Stack.Screen name="+not-found" />
+        </Stack>
+        <StatusBar style="auto" />
+      </ThemeProvider>
+    </AuthProvider>
   );
 }
