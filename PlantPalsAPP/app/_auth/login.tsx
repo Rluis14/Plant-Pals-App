@@ -96,29 +96,6 @@ const LoginScreen = () => {
 
             <View style={styles.socialContainer}>
               <TouchableOpacity style={styles.socialButton}>
-
-                <Image
-                  source={require('@/assets/images/google.png')}
-                  style={styles.socialIcon}
-                />
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.socialButton}>
-                <Image
-                  source={require('@/assets/images/facebook.png')}
-                  style={styles.socialIcon}
-                />
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.socialButton}>
-                <Image
-                  source={require('@/assets/images/icloud.png')}
-                  style={styles.socialIcon}
-                />
-              </TouchableOpacity>
-                <TouchableOpacity style={styles.socialButton}>
-                <Image
-                  source={require('@/assets/images/microsoft.png')}
-                  style={styles.socialIcon}
-                />
                 <Ionicons name="logo-google" size={24} color="#4285F4" />
               </TouchableOpacity>
               <TouchableOpacity style={styles.socialButton}>
