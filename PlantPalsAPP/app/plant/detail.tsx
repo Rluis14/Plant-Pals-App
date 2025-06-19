@@ -3,7 +3,6 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert } from 'rea
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Plant, savedPlantsService } from '../../lib/supabase';
-import Share from 'react-native-share';
 
 export default function PlantDetailScreen() {
   const { plant } = useLocalSearchParams();
@@ -63,24 +62,6 @@ export default function PlantDetailScreen() {
     }
   };
 
-  //share-outline button
-  /* const handleSharePlant = () => {
-    if (!plantDetails) return;
-
-    const shareMessage = `Check out this plant: ${plantDetails.name} (${plantDetails.scientific_name || 'No scientific name available'})\n\nDescription: ${plantDetails.description || 'No description available.'}`;
-    
-    // Implement sharing functionality here (e.g., using Share API)
-    Alert.alert('Share Plant', shareMessage);
-  }; */
-  const handleSharePlant = async () => {
-    try {
-      const res = await Share.open(options);
-        console.log('Share response:', res);
-    }catch(error){
-      console.error('Error sharing plant:', error);
-      Alert.alert('Error', 'Failed to share plant details. Please try again.');
-    }
-
   if (!plantDetails) {
     return (
       <View style={styles.center}>
@@ -133,7 +114,7 @@ export default function PlantDetailScreen() {
               color="#000"
             />
           </TouchableOpacity>
-          <TouchableOpacity style={styles.headerActionButton} onPress={handleSharePlant}>
+          <TouchableOpacity style={styles.headerActionButton}>
             <Ionicons name="share-outline" size={24} color="#000" />
           </TouchableOpacity>
         </View>
