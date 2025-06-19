@@ -257,6 +257,11 @@ const styles = StyleSheet.create({
     color: '#66D9EF',
     fontWeight: 'bold',
   },
+  socialIcon: {
+    width: 28,
+    height: 28,
+    resizeMode: 'contain',
+  },
 });
 
 export default LoginScreen;
