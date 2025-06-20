@@ -4,10 +4,8 @@ import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
-import 'react-native-reanimated/lib/reanimated2/js-reanimated';
 
 import { useColorScheme } from '@/hooks/useColorScheme';
-import { AuthProvider } from '../contexts/AuthContext';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -29,19 +27,15 @@ export default function RootLayout() {
   }
 
   return (
-    <AuthProvider>
-      <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-        <Stack>
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen name="_auth" options={{ headerShown: false }} />
-          <Stack.Screen name="search" options={{ headerShown: false }} />
-          <Stack.Screen name="plant" options={{ headerShown: false }} />
-          <Stack.Screen name="mylist" options={{ headerShown: false }} />
-          <Stack.Screen name="trending" options={{ headerShown: false }} />
-          <Stack.Screen name="+not-found" />
-        </Stack>
-        <StatusBar style="auto" />
-      </ThemeProvider>
-    </AuthProvider>
+    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+      <Stack screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="index" />
+        <Stack.Screen name="_auth" />
+        <Stack.Screen name="(tabs)" />
+        <Stack.Screen name="plant" />
+        <Stack.Screen name="+not-found" />
+      </Stack>
+      <StatusBar style="auto" />
+    </ThemeProvider>
   );
 }

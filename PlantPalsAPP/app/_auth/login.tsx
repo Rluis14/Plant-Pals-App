@@ -1,55 +1,22 @@
 import { Link, router } from 'expo-router';
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, ScrollView, Alert } from 'react-native';
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, Image, KeyboardAvoidingView, Platform, ScrollView, Alert } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useAuth } from '../../contexts/AuthContext';
+import { Ionicons } from '@expo/vector-icons';
 
 const LoginScreen = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const { signIn } = useAuth();
 
-  const validateEmail = (email: string) => {
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-  };
-
-  const handleLogin = async () => {
+  const handleLogin = () => {
     if (!email || !password) {
       Alert.alert('Error', 'Please fill in all fields');
       return;
     }
-
-    if (!validateEmail(email)) {
-      Alert.alert('Error', 'Please enter a valid email address');
-      return;
-    }
-
-    setLoading(true);
-    try {
-      await signIn({ email, password });
-      router.replace('/(tabs)');
-    } catch (error: any) {
-      Alert.alert('Login Error', error.message || 'Failed to sign in');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleForgotPassword = async () => {
-    if (!email) {
-      Alert.alert('Error', 'Please enter your email address first');
-      return;
-    }
-
-    try {
-      const { resetPassword } = useAuth();
-      await resetPassword(email);
-      Alert.alert('Success', 'Password reset email sent! Check your inbox.');
-    } catch (error: any) {
-      Alert.alert('Error', error.message || 'Failed to send reset email');
-    }
+    
+    console.log('Logging in with:', email, password);
+    router.replace('/(tabs)');
   };
 
   return (
@@ -63,6 +30,10 @@ const LoginScreen = () => {
       >
         <ScrollView contentContainerStyle={styles.scrollContainer}>
           <View style={styles.header}>
+            <Image
+              source={require('../../assets/images/plant-logo.png')}
+              style={styles.logo}
+            />
             <Text style={styles.title}>Welcome Back!</Text>
             <Text style={styles.subtitle}>Let's get back to your plant journey</Text>
           </View>
@@ -78,7 +49,6 @@ const LoginScreen = () => {
                 onChangeText={setEmail}
                 keyboardType="email-address"
                 autoCapitalize="none"
-                autoComplete="email"
               />
             </View>
 
@@ -92,32 +62,49 @@ const LoginScreen = () => {
                   secureTextEntry={!showPassword}
                   value={password}
                   onChangeText={setPassword}
-                  autoComplete="password"
                 />
                 <TouchableOpacity
                   style={styles.showPasswordButton}
                   onPress={() => setShowPassword(!showPassword)}
                 >
-                  <Text style={styles.showPasswordText}>
-                    {showPassword ? 'Hide' : 'Show'}
-                  </Text>
+                  <Ionicons 
+                    name={showPassword ? "eye-off" : "eye"} 
+                    size={24} 
+                    color="#A67B5B" 
+                  />
                 </TouchableOpacity>
               </View>
             </View>
 
-            <TouchableOpacity style={styles.forgotPassword} onPress={handleForgotPassword}>
+            <TouchableOpacity style={styles.forgotPassword}>
               <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={[styles.loginButton, (!email || !password || loading) && styles.disabledButton]}
+              style={[styles.loginButton, (!email || !password) && styles.disabledButton]}
               onPress={handleLogin}
-              disabled={!email || !password || loading}
+              disabled={!email || !password}
             >
-              <Text style={styles.loginButtonText}>
-                {loading ? 'Signing In...' : 'Login'}
-              </Text>
+              <Text style={styles.loginButtonText}>Login</Text>
             </TouchableOpacity>
+
+            <View style={styles.dividerContainer}>
+              <View style={styles.dividerLine} />
+              <Text style={styles.dividerText}>or continue with</Text>
+              <View style={styles.dividerLine} />
+            </View>
+
+            <View style={styles.socialContainer}>
+              <TouchableOpacity style={styles.socialButton}>
+                <Ionicons name="logo-google" size={24} color="#4285F4" />
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.socialButton}>
+                <Ionicons name="logo-apple" size={24} color="#000" />
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.socialButton}>
+                <Ionicons name="logo-facebook" size={24} color="#1877F2" />
+              </TouchableOpacity>
+            </View>
           </View>
 
           <View style={styles.footer}>
@@ -150,6 +137,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 40,
     marginBottom: 30,
+  },
+  logo: {
+    width: 70,
+    height: 70,
+    marginBottom: 15,
   },
   title: {
     fontSize: 28,
@@ -197,10 +189,6 @@ const styles = StyleSheet.create({
     right: 15,
     padding: 10,
   },
-  showPasswordText: {
-    color: '#66D9EF',
-    fontWeight: '500',
-  },
   forgotPassword: {
     alignSelf: 'flex-end',
     marginBottom: 25,
@@ -225,6 +213,37 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
   },
+  dividerContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginVertical: 20,
+  },
+  dividerLine: {
+    flex: 1,
+    height: 1,
+    backgroundColor: '#A67B5B',
+    opacity: 0.3,
+  },
+  dividerText: {
+    color: '#2F684E',
+    paddingHorizontal: 10,
+    opacity: 0.7,
+  },
+  socialContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    gap: 20,
+    marginTop: 10,
+  },
+  socialButton: {
+    backgroundColor: 'white',
+    width: 60,
+    height: 60,
+    borderRadius: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+    elevation: 2,
+  },
   footer: {
     flexDirection: 'row',
     justifyContent: 'center',
@@ -237,6 +256,11 @@ const styles = StyleSheet.create({
   footerLink: {
     color: '#66D9EF',
     fontWeight: 'bold',
+  },
+  socialIcon: {
+    width: 28,
+    height: 28,
+    resizeMode: 'contain',
   },
 });
 
