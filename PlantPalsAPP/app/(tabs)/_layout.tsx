@@ -31,9 +31,9 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="index"
+        name="home"
         options={{
-          title: 'Trending',
+          title: 'Home',
           tabBarIcon: ({ size }) => <Ionicons name="trending-up-outline" size={size} />,
         }}
       />
