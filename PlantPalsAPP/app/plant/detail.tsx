@@ -99,7 +99,7 @@ export default function PlantDetailScreen() {
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
       <View style={styles.header}>
         <TouchableOpacity style={styles.backButton} onPress={handleGoBack}>
-          <Ionicons name="arrow-back" size={24} color="#000" />
+          <Ionicons name="arrow-back" size={24} color="#2F684E" />
         </TouchableOpacity>
         
         <View style={styles.headerActions}>
@@ -111,11 +111,11 @@ export default function PlantDetailScreen() {
             <Ionicons 
               name={isSaved ? "heart" : "heart-outline"} 
               size={24} 
-              color="#000"
+              color="#2F684E"
             />
           </TouchableOpacity>
           <TouchableOpacity style={styles.headerActionButton}>
-            <Ionicons name="share-outline" size={24} color="#000" />
+            <Ionicons name="share-outline" size={24} color="#2F684E" />
           </TouchableOpacity>
         </View>
       </View>
@@ -130,7 +130,7 @@ export default function PlantDetailScreen() {
           <View style={styles.tagsContainer}>
             {plantDetails.categories?.name && (
               <View style={styles.categoryTag}>
-                <Ionicons name="leaf" size={14} color="#000" />
+                <Ionicons name="leaf" size={14} color="#fff" />
                 <Text style={styles.categoryText}>{plantDetails.categories.name}</Text>
               </View>
             )}
@@ -153,7 +153,7 @@ export default function PlantDetailScreen() {
           {plantDetails.water_frequency_days && (
             <View style={styles.careInfoCard}>
               <View style={styles.careInfoHeader}>
-                <Ionicons name="water" size={24} color="#000" />
+                <Ionicons name="water" size={24} color="#66D9EF" />
                 <Text style={styles.careInfoTitle}>Watering</Text>
               </View>
               <Text style={styles.careInfoValue}>Every {plantDetails.water_frequency_days} days</Text>
@@ -166,7 +166,7 @@ export default function PlantDetailScreen() {
           {plantDetails.light_requirements && (
             <View style={styles.careInfoCard}>
               <View style={styles.careInfoHeader}>
-                <Ionicons name={getLightIcon(plantDetails.light_requirements)} size={24} color="#000" />
+                <Ionicons name={getLightIcon(plantDetails.light_requirements)} size={24} color="#fff" />
                 <Text style={styles.careInfoTitle}>Light</Text>
               </View>
               <Text style={styles.careInfoValue}>{plantDetails.light_requirements} light</Text>
@@ -178,7 +178,7 @@ export default function PlantDetailScreen() {
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Care Instructions</Text>
             <View style={styles.instructionItem}>
-              <Ionicons name="water" size={20} color="#000" />
+              <Ionicons name="water" size={20} color="#66D9EF" />
               <Text style={styles.instructionText}>{plantDetails.water_instructions}</Text>
             </View>
           </View>
@@ -213,7 +213,7 @@ export default function PlantDetailScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#E6F2EA',
   },
   center: {
     flex: 1,
@@ -231,6 +231,7 @@ const styles = StyleSheet.create({
     paddingTop: 50,
     paddingHorizontal: 20,
     paddingBottom: 10,
+    
   },
   backButton: {
     padding: 8,
@@ -252,13 +253,13 @@ const styles = StyleSheet.create({
     fontSize: 28,
     fontWeight: 'bold',
     marginBottom: 8,
-    color: '#000',
+    color: '#2F684E',
   },
   scientificName: {
     fontSize: 16,
     fontStyle: 'italic',
     marginBottom: 12,
-    color: '#000',
+    color: '#A67B5B',
   },
   tagsContainer: {
     flexDirection: 'row',
@@ -272,23 +273,23 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
     borderRadius: 16,
     gap: 4,
-    backgroundColor: '#f0f0f0',
+    backgroundColor: '#2F684E',
   },
   categoryText: {
     fontSize: 14,
     fontWeight: '500',
-    color: '#000',
+    color: '#fff',
   },
   careLevelTag: {
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 16,
-    backgroundColor: '#f0f0f0',
+    backgroundColor: '#2F684E',
   },
   careLevelText: {
     fontSize: 14,
     fontWeight: '500',
-    color: '#000',
+    color: '#fff',
   },
   section: {
     marginBottom: 24,
@@ -297,12 +298,12 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: '600',
     marginBottom: 12,
-    color: '#000',
+    color: '#2F684E',
   },
   description: {
     fontSize: 16,
     lineHeight: 24,
-    color: '#000',
+    color: '#A67B5B',
   },
   careInfoContainer: {
     marginBottom: 24,
@@ -312,11 +313,12 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     marginBottom: 12,
     borderLeftWidth: 4,
-    borderLeftColor: '#ccc',
-    backgroundColor: '#f9f9f9',
+    borderLeftColor: '#A67B5B',
+    backgroundColor: '#2F684E',
   },
   careInfoHeader: {
     flexDirection: 'row',
+    fontFamily: 'SpaceMono',
     alignItems: 'center',
     marginBottom: 8,
     gap: 8,
@@ -324,18 +326,21 @@ const styles = StyleSheet.create({
   careInfoTitle: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#000',
+    fontFamily: 'SpaceMono',
+    color: '#fff',
   },
   careInfoValue: {
     fontSize: 18,
     fontWeight: 'bold',
+    fontFamily: 'SpaceMono',
     marginBottom: 4,
-    color: '#000',
+    color: '#fff',
   },
   careInfoDescription: {
     fontSize: 14,
+    fontFamily: 'SpaceMono',
     lineHeight: 20,
-    color: '#000',
+    color: '#fff',
   },
   instructionItem: {
     flexDirection: 'row',
@@ -347,7 +352,7 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 16,
     lineHeight: 22,
-    color: '#000',
+    color: '#A67B5B',
   },
   actionButtons: {
     gap: 12,
