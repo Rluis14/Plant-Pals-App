@@ -3,6 +3,7 @@ import { View, Text, FlatList, StyleSheet, TouchableOpacity, Alert, ActivityIndi
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { savedPlantsService, SavedPlant } from '../../lib/supabase';
+import PlantImage from '../../components/PlantImage';
 
 function MyListScreen() {
   const [savedPlants, setSavedPlants] = useState<SavedPlant[]>([]);
@@ -66,6 +67,12 @@ function MyListScreen() {
   const renderPlantItem = ({ item }: { item: SavedPlant }) => (
     <View style={styles.plantItem}>
       <TouchableOpacity onPress={() => handleViewPlant(item)} style={styles.row}>
+        <PlantImage
+          imagePath={item.plants.image_path}
+          style={styles.plantImage}
+          defaultSize={80}
+        />
+        
         <View style={styles.textContainer}>
           <Text style={styles.name}>{item.plants.name}</Text>
           {item.plants.scientific_name && (
@@ -209,6 +216,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     flex: 1,
+  },
+  plantImage: {
+    width: 80,
+    height: 80,
+    marginRight: 15,
+    borderRadius: 8,
   },
   textContainer: {
     flex: 1,

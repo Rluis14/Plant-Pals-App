@@ -1,8 +1,8 @@
 import { createClient } from '@supabase/supabase-js'
 
 // Replace these with your actual Supabase project credentials
-const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL || 'YOUR_PROJECT_URL'
-const supabaseKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY || 'YOUR_ANON_KEY'
+const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL || 'https://hwfbgmqynqgnrclzhrnl.supabase.coL'
+const supabaseKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh3ZmJnbXF5bnFnbnJjbHpocm5sIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk0OTcwOTIsImV4cCI6MjA2NTA3MzA5Mn0.nDaEt-iVGF8Wo665wHUV2StFf2E-QmjqcC765Me9a3s'
 
 export const supabase = createClient(supabaseUrl, supabaseKey)
 
