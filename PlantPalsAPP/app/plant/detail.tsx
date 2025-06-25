@@ -156,17 +156,7 @@ export default function PlantDetailScreen() {
 };
 
   
-  const handleSetReminder = () => {
-    if (plantDetails.water_frequency_days) {
-      Alert.alert(
-        "Watering Reminder", 
-        `Reminder set! Water your ${plantDetails.name} every ${plantDetails.water_frequency_days} days.`
-      );
-    } else {
-      Alert.alert("Reminder", "Watering reminder set!");
-    }
-  };
-  
+
   const handleGoBack = () => {
     router.back();
   };
@@ -287,10 +277,7 @@ export default function PlantDetailScreen() {
 
         <View style={styles.actionButtons}>
 
-          <TouchableOpacity onPress={handleSetReminder} style={styles.primaryButton}>
-            <Ionicons name="alarm" size={20} color="#fff" />
-            <Text style={styles.primaryButtonText}>Set Watering Reminder</Text>
-          </TouchableOpacity>
+
 
           <TouchableOpacity 
             onPress={handleSavePlant} 

@@ -129,12 +129,7 @@ function SearchScreen() {
               <Text style={styles.scientificName}>{item.scientific_name}</Text>
             )}
 
-            {item.water_frequency_days && (
-              <View style={styles.waterTag}>
-                <Ionicons name="water" size={12} color="#66D9EF" />
-                <Text style={styles.waterText}>{item.water_frequency_days}d</Text>
-              </View>
-            )}
+            
 
             {item.description && (
               <Text style={styles.resultDescription} numberOfLines={2}>
@@ -153,12 +148,7 @@ function SearchScreen() {
                   <Text style={styles.careLevelText}>{item.care_level}</Text>
                 </View>
               )}
-              {item.water_frequency_days && (
-                <View style={styles.waterTag}>
-                  <Ionicons name="water" size={12} color="#000" />
-                  <Text style={styles.waterText}>{item.water_frequency_days}d</Text>
-                </View>
-              )}
+              
             </View>
           </View>
         </TouchableOpacity>

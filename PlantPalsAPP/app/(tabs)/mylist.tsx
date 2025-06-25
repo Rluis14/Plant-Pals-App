@@ -95,12 +95,7 @@ function MyListScreen() {
                 <Text style={styles.careLevelText}>{item.plants.care_level}</Text>
               </View>
             )}
-            {item.plants.water_frequency_days && (
-              <View style={styles.waterTag}>
-                <Ionicons name="water" size={12} color="#000" />
-                <Text style={styles.waterText}>{item.plants.water_frequency_days}d</Text>
-              </View>
-            )}
+            
           </View>
           <Text style={styles.savedDate}>
             Saved {new Date(item.saved_at).toLocaleDateString()}
