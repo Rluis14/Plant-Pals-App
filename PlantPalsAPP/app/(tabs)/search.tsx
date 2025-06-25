@@ -134,12 +134,14 @@ function SearchScreen() {
                 <Ionicons name="water" size={12} color="#66D9EF" />
                 <Text style={styles.waterText}>{item.water_frequency_days}d</Text>
               </View>
+            )}
 
             {item.description && (
               <Text style={styles.resultDescription} numberOfLines={2}>
                 {item.description}
-              </Tex
+              </Text>
             )}
+            
             <View style={styles.plantMeta}>
               {item.categories?.name && (
                 <View style={styles.categoryTag}>
