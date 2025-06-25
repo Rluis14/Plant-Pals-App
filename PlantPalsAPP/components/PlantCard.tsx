@@ -1,40 +1,52 @@
 import React from 'react';
-import { Image, View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
+import { Plant } from '../lib/supabase';
+import PlantImage from './PlantImage';
 
-export default function PlantCard({ plant }) {
+interface PlantCardProps {
+  plant: Plant;
+  onPress?: () => void;
+}
+
+export default function PlantCard({ plant, onPress }: PlantCardProps) {
   const router = useRouter();
   
   const handlePress = () => {
-    router.push({
-      pathname: '/plant/detail',
-      params: {
-        plant: encodeURIComponent(JSON.stringify(plant))
-      }
-    });
-  };
-
-  const waterInfo = {
-    summary: `Water every ${plant.water_frequency_days} days`,
-    instructions: plant.water_instructions
+    if (onPress) {
+      onPress();
+    } else {
+      router.push({
+        pathname: '/plant/detail',
+        params: {
+          plant: encodeURIComponent(JSON.stringify(plant))
+        }
+      });
+    }
   };
 
   return (
     <TouchableOpacity onPress={handlePress} style={styles.card}>
-      <Image 
-        source={{ uri: plant.image_url }} 
+      <PlantImage
+        imagePath={plant.image_path}
         style={styles.image}
+        defaultSize={80}
       />
       <View style={styles.info}>
         <Text style={styles.name}>{plant.name}</Text>
         {plant.scientific_name && (
           <Text style={styles.scientific}>{plant.scientific_name}</Text>
         )}
-        <Text style={styles.watering}>{waterInfo.summary}</Text>
+        {plant.water_frequency_days && (
+          <Text style={styles.watering}>Water every {plant.water_frequency_days} days</Text>
+        )}
         <View style={styles.meta}>
-          <Text style={styles.care}>Care: {plant.care_level}</Text>
-          <Text style={styles.light}>Light: {plant.light_requirements}</Text>
+          {plant.care_level && (
+            <Text style={styles.care}>Care: {plant.care_level}</Text>
+          )}
+          {plant.light_requirements && (
+            <Text style={styles.light}>Light: {plant.light_requirements}</Text>
+          )}
         </View>
       </View>
     </TouchableOpacity>
@@ -68,6 +80,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 16,
     marginBottom: 2,
+    color: '#333',
   },
   scientific: {
     fontStyle: 'italic',
