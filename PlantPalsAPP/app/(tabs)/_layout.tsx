@@ -34,7 +34,7 @@ export default function TabLayout() {
         name="home"
         options={{
           title: 'Home',
-          tabBarIcon: ({ size }) => <Ionicons name="trending-up-outline" size={size} />,
+          tabBarIcon: ({ size }) => <Ionicons name="home-outline" size={size} />,
         }}
       />
       <Tabs.Screen

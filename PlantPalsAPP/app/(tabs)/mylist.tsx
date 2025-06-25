@@ -3,6 +3,7 @@ import { View, Text, FlatList, StyleSheet, TouchableOpacity, Alert, ActivityIndi
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { savedPlantsService, SavedPlant } from '../../lib/supabase';
+import PlantImage from '../../components/PlantImage';
 
 function MyListScreen() {
   const [savedPlants, setSavedPlants] = useState<SavedPlant[]>([]);
@@ -66,6 +67,12 @@ function MyListScreen() {
   const renderPlantItem = ({ item }: { item: SavedPlant }) => (
     <View style={styles.plantItem}>
       <TouchableOpacity onPress={() => handleViewPlant(item)} style={styles.row}>
+        <PlantImage
+          imagePath={item.plants.image_path}
+          style={styles.plantImage}
+          defaultSize={80}
+        />
+        
         <View style={styles.textContainer}>
           <Text style={styles.name}>{item.plants.name}</Text>
           {item.plants.scientific_name && (
@@ -79,7 +86,7 @@ function MyListScreen() {
           <View style={styles.plantMeta}>
             {item.plants.categories?.name && (
               <View style={styles.categoryTag}>
-                <Ionicons name="leaf" size={12} color="#000" />
+                <Ionicons name="leaf" size={12} color="#2F684E" />
                 <Text style={styles.categoryText}>{item.plants.categories.name}</Text>
               </View>
             )}
@@ -119,7 +126,7 @@ function MyListScreen() {
           <Text style={styles.header}>My Saved Plants</Text>
         </View>
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#000" />
+          <ActivityIndicator size="large" color="#2F684E" />
           <Text style={styles.loadingText}>Loading your plants...</Text>
         </View>
       </View>
@@ -146,7 +153,7 @@ function MyListScreen() {
         }
         ListEmptyComponent={
           <View style={styles.emptyContainer}>
-            <Ionicons name="leaf-outline" size={64} color="#000" />
+            <Ionicons name="leaf-outline" size={64} color="#2F684E" />
             <Text style={styles.emptyTitle}>No saved plants yet</Text>
             <Text style={styles.emptySubtitle}>
               Search for plants and add them to your collection to see them here
@@ -155,7 +162,7 @@ function MyListScreen() {
               style={styles.searchButton}
               onPress={() => router.push('/(tabs)/search')}
             >
-              <Ionicons name="search" size={20} color="#000" />
+              <Ionicons name="search" size={20} color="#fff" />
               <Text style={styles.searchButtonText}>Start Searching</Text>
             </TouchableOpacity>
           </View>
@@ -168,7 +175,7 @@ function MyListScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#E6F2EA',
     paddingTop: 60,
     paddingHorizontal: 20,
   },
@@ -179,12 +186,12 @@ const styles = StyleSheet.create({
   header: {
     fontSize: 24,
     fontWeight: '600',
-    color: '#000',
+    color: '#2F684E',
   },
   subHeader: {
     fontSize: 14,
     marginTop: 4,
-    color: '#000',
+    color: '#2F684E',
   },
   loadingContainer: {
     flex: 1,
@@ -194,7 +201,7 @@ const styles = StyleSheet.create({
   loadingText: {
     marginTop: 10,
     fontSize: 16,
-    color: '#000',
+    color: '#2F684E',
   },
   plantItem: {
     flexDirection: 'row',
@@ -210,6 +217,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flex: 1,
   },
+  plantImage: {
+    width: 80,
+    height: 80,
+    marginRight: 15,
+    borderRadius: 8,
+  },
   textContainer: {
     flex: 1,
   },
@@ -217,7 +230,7 @@ const styles = StyleSheet.create({
     fontSize: 17,
     fontWeight: '600',
     marginBottom: 3,
-    color: '#000',
+    color: '#2F684E',
   },
   scientificName: {
     fontSize: 13,
@@ -315,12 +328,12 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     borderRadius: 25,
     gap: 8,
-    backgroundColor: '#f0f0f0',
+    backgroundColor: '#2F684E',
   },
   searchButtonText: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#000',
+    color: '#fff',
   },
 });
 
