@@ -86,7 +86,7 @@ export default function MyListScreen() {
           source={
             item.plants.image_path 
               ? { uri: `https://your-supabase-url.supabase.co/storage/v1/object/public/plant-images/${item.plants.image_path}` }
-              : require('../../assets/images/not.png')
+              : require('../../../assets/images/not.png')
           }
           style={styles.image}
         />
