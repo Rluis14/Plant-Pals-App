@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Share, Linking, Platform, TouchableOpacity, Alert, ActionSheetIOS } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Plant, savedPlantsService } from '../../lib/supabase';
 import { useAuth } from '../../contexts/AuthContext';
 import PlantImage from '../../components/PlantImage';
+
+
 
 export default function PlantDetailScreen() {
   const { plant } = useLocalSearchParams();
@@ -13,6 +15,7 @@ export default function PlantDetailScreen() {
   const [plantDetails, setPlantDetails] = useState<Plant | null>(null);
   const [isSaved, setIsSaved] = useState(false);
   const [checkingStatus, setCheckingStatus] = useState(true);
+
 
   useEffect(() => {
     if (plant) {
@@ -29,6 +32,8 @@ export default function PlantDetailScreen() {
       }
     }
   }, [plant]);
+
+  
 
   const checkSavedStatus = async (plantId: number) => {
     if (!user) {
@@ -99,6 +104,69 @@ export default function PlantDetailScreen() {
     );
   }
 
+
+  // share button functionality
+  const message = `Check out this plant: ${plantDetails.name} (${plantDetails.scientific_name || 'No scientific name available'})\n\nDescription: ${plantDetails.description || 'No description available.'}\n\nWatering Frequency: Every ${plantDetails.water_frequency_days || 'N/A'} days\nLight Requirements: ${plantDetails.light_requirements || 'N/A'}`;
+
+  const shareSystem = async () => {
+    try {
+      await Share.share({message});
+    } catch (error) {
+      console.error('Error sharing plant:', error);
+      Alert.alert('Error', 'Could not share plant details. Please try again.');
+  }
+  };
+
+  const shareSMS = () => {
+    const smsURL = `sms:?body=${encodeURIComponent(message)}`;
+    Linking.openURL(smsURL).catch((error) => 
+      Alert.alert('Error', 'Could not open SMS app. Please try again.')
+    );
+  };
+
+  
+  const handleSharePlant =  () => {
+    const options = ['System Share', 'SMS', 'Cancel'];
+    const actions = [shareSystem, shareSMS];
+    
+    if (Platform.OS === 'ios') {
+      ActionSheetIOS.showActionSheetWithOptions(
+        {
+          options, 
+          cancelButtonIndex: 2
+        },
+        (buttonIndex) => {
+          if (buttonIndex !== 2) {
+            actions[buttonIndex]();
+          }
+        }
+      );
+    }else {
+      Alert.alert(
+        'Share Plant',
+        'Choose how you want to share this plant:',
+        [
+          { text: 'System Share', onPress: shareSystem },
+          { text: 'SMS', onPress: shareSMS },
+          { text: 'Cancel', style: 'cancel' }
+        ],
+        {cancelable: true}
+      );
+    }
+};
+
+  
+  const handleSetReminder = () => {
+    if (plantDetails.water_frequency_days) {
+      Alert.alert(
+        "Watering Reminder", 
+        `Reminder set! Water your ${plantDetails.name} every ${plantDetails.water_frequency_days} days.`
+      );
+    } else {
+      Alert.alert("Reminder", "Watering reminder set!");
+    }
+  };
+  
   const handleGoBack = () => {
     router.back();
   };
@@ -132,8 +200,13 @@ export default function PlantDetailScreen() {
               color="#2F684E"
             />
           </TouchableOpacity>
+
+          <TouchableOpacity style={styles.headerActionButton} onPress={handleSharePlant}>
+            <Ionicons name="share-outline" size={24} color="#000" />
+
           <TouchableOpacity style={styles.headerActionButton}>
             <Ionicons name="share-outline" size={24} color="#2F684E" />
+
           </TouchableOpacity>
         </View>
       </View>
@@ -212,6 +285,12 @@ export default function PlantDetailScreen() {
         )}
 
         <View style={styles.actionButtons}>
+
+          <TouchableOpacity onPress={handleSetReminder} style={styles.primaryButton}>
+            <Ionicons name="alarm" size={20} color="#fff" />
+            <Text style={styles.primaryButtonText}>Set Watering Reminder</Text>
+          </TouchableOpacity>
+
           <TouchableOpacity 
             onPress={handleSavePlant} 
             style={[styles.primaryButton, isSaved && styles.savedPrimaryButton]}
