@@ -1,7 +1,8 @@
-import { createClient } from '@supabase/supabase-js'
+import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = 'https://hwfbgmqynqgnrclzhrnl.supabase.co'
-const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh3ZmJnbXF5bnFnbnJjbHpocm5sIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk0OTcwOTIsImV4cCI6MjA2NTA3MzA5Mn0.nDaEt-iVGF8Wo665wHUV2StFf2E-QmjqcC765Me9a3s'
+const supabaseUrl = 'https://hwfbgmqynqgnrclzhrnl.supabase.co';
+const supabaseAnonKey =
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh3ZmJnbXF5bnFnbnJjbHpocm5sIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk0OTcwOTIsImV4cCI6MjA2NTA3MzA5Mn0.nDaEt-iVGF8Wo665wHUV2StFf2E-QmjqcC765Me9a3s';
 
 // Create Supabase client with optimized settings for mobile
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
@@ -10,15 +11,13 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
     persistSession: true,
     detectSessionInUrl: false,
     flowType: 'pkce',
-    // Add retry configuration
-    retryAttempts: 3,
-    retryDelay: 1000,
+    // retryAttempts and retryDelay are not valid Supabase auth options and have been removed
   },
   global: {
     headers: {
       'X-Client-Info': 'plantpals-mobile-app',
-      'User-Agent': 'PlantPals/1.0.0 (Mobile App)'
-    }
+      'User-Agent': 'PlantPals/1.0.0 (Mobile App)',
+    },
   },
   // Add timeout configuration
   db: {
@@ -29,38 +28,38 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
       eventsPerSecond: 10,
     },
   },
-})
+});
 
 export type Plant = {
-  id: number
-  name: string
-  scientific_name?: string
-  description?: string
-  water_frequency_days?: number
-  water_instructions?: string
-  light_requirements?: string
-  care_level?: string
-  category_id?: number
-  image_path?: string
+  id: number;
+  name: string;
+  scientific_name?: string;
+  description?: string;
+  water_frequency_days?: number;
+  water_instructions?: string;
+  light_requirements?: string;
+  care_level?: string;
+  category_id?: number;
+  image_path?: string;
   categories?: {
-    name: string
-  }
-}
+    name: string;
+  };
+};
 
 export type SavedPlant = {
-  id: number
-  plant_id: number
-  user_id: string
-  saved_at: string
-  plants: Plant
-}
+  id: number;
+  plant_id: number;
+  user_id: string;
+  saved_at: string;
+  plants: Plant;
+};
 
 export type UserProfile = {
-  user_id: string
-  full_name: string
-  created_at: string
-  updated_at: string
-}
+  user_id: string;
+  full_name: string;
+  created_at: string;
+  updated_at: string;
+};
 
 // Email validation helper
 const isValidEmail = (email: string): boolean => {
@@ -80,53 +79,65 @@ export const authService = {
     try {
       // Validate inputs before making API call
       const cleanEmail = email.trim().toLowerCase();
-      
+
       if (!cleanEmail) {
         throw new Error('Please enter your email address.');
       }
-      
+
       if (!isValidEmail(cleanEmail)) {
-        throw new Error('Please enter a valid email address (e.g., user@example.com).');
+        throw new Error(
+          'Please enter a valid email address (e.g., user@example.com).',
+        );
       }
-      
+
       if (!password) {
         throw new Error('Please enter a password.');
       }
-      
+
       if (!isValidPassword(password)) {
         throw new Error('Password must be at least 6 characters long.');
       }
-      
+
       if (!fullName.trim()) {
         throw new Error('Please enter your full name.');
       }
 
       console.log('Attempting to sign up user:', cleanEmail);
-      
+
       // Add a small delay to avoid rate limiting
-      await new Promise(resolve => setTimeout(resolve, 500));
-      
+      await new Promise((resolve) => setTimeout(resolve, 500));
+
       const { data, error } = await supabase.auth.signUp({
         email: cleanEmail,
         password,
         options: {
           data: {
-            full_name: fullName.trim()
+            full_name: fullName.trim(),
           },
           // Disable email confirmation for development
           emailRedirectTo: undefined,
-        }
+        },
       });
 
       if (error) {
         console.error('Supabase signup error:', error);
-        
+
         // Handle specific error types with user-friendly messages
-        if (error.message.includes('captcha') || error.message.includes('verification')) {
-          throw new Error('Please try again in a few moments. If this continues, contact support.');
+        if (
+          error.message.includes('captcha') ||
+          error.message.includes('verification')
+        ) {
+          throw new Error(
+            'Please try again in a few moments. If this continues, contact support.',
+          );
         }
-        if (error.message.includes('already registered') || error.message.includes('already been registered')) {
-          throw new Error(`An account with ${cleanEmail} already exists. Please try logging in instead.`);
+        if (
+          error.message.includes('already registered') ||
+          error.message.includes('already been registered')
+        ) {
+          throw new Error(
+            `An account with ${cleanEmail} already exists. Please try logging in instead.`,
+          );
         }
         if (error.message.includes('Invalid email')) {
           throw new Error('Please enter a valid email address.');
@@ -134,24 +145,31 @@ export const authService = {
         if (error.message.includes('Password should be at least')) {
           throw new Error('Password must be at least 6 characters long.');
         }
-        if (error.message.includes('rate limit') || error.message.includes('too many')) {
-          throw new Error('Too many attempts. Please wait 5 minutes and try again.');
+        if (
+          error.message.includes('rate limit') ||
+          error.message.includes('too many')
+        ) {
+          throw new Error(
+            'Too many attempts. Please wait 5 minutes and try again.',
+          );
         }
         if (error.message.includes('signup is disabled')) {
-          throw new Error('Account registration is temporarily disabled. Please try again later.');
+          throw new Error(
+            'Account registration is temporarily disabled. Please try again later.',
+          );
         }
-        
+
         // Generic error fallback
         throw new Error(`Registration failed: ${error.message}`);
       }
 
       console.log('Signup successful:', data.user?.email);
-      
+
       // If user was created but needs email confirmation, handle it
       if (data.user && !data.session) {
         console.log('User created, waiting for email confirmation');
       }
-      
+
       return data;
     } catch (error) {
       console.error('Sign up error:', error);
@@ -164,24 +182,26 @@ export const authService = {
     try {
       // Validate inputs before making API call
       const cleanEmail = email.trim().toLowerCase();
-      
+
       if (!cleanEmail) {
         throw new Error('Please enter your email address.');
       }
-      
+
       if (!isValidEmail(cleanEmail)) {
-        throw new Error('Please enter a valid email address (e.g., user@example.com).');
+        throw new Error(
+          'Please enter a valid email address (e.g., user@example.com).',
+        );
       }
-      
+
       if (!password) {
         throw new Error('Please enter your password.');
       }
 
       console.log('Attempting to sign in user:', cleanEmail);
-      
+
       // Add a small delay to avoid rate limiting
-      await new Promise(resolve => setTimeout(resolve, 500));
-      
+      await new Promise((resolve) => setTimeout(resolve, 500));
+
       const { data, error } = await supabase.auth.signInWithPassword({
         email: cleanEmail,
         password,
@@ -189,27 +209,45 @@ export const authService = {
 
       if (error) {
         console.error('Supabase signin error:', error);
-        
+
         // Handle specific error types with helpful messages
-        if (error.message.includes('captcha') || error.message.includes('verification')) {
-          throw new Error('Please try again in a few moments. If this continues, contact support.');
+        if (
+          error.message.includes('captcha') ||
+          error.message.includes('verification')
+        ) {
+          throw new Error(
+            'Please try again in a few moments. If this continues, contact support.',
+          );
         }
         if (error.message.includes('Invalid login credentials')) {
-          throw new Error('Invalid email or password. Please check your credentials and try again.');
+          throw new Error(
+            'Invalid email or password. Please check your credentials and try again.',
+          );
         }
         if (error.message.includes('Email not confirmed')) {
-          throw new Error('Please check your email and confirm your account before logging in.');
+          throw new Error(
+            'Please check your email and confirm your account before logging in.',
+          );
         }
-        if (error.message.includes('Too many requests') || error.message.includes('rate limit')) {
-          throw new Error('Too many attempts. Please wait 5 minutes and try again.');
+        if (
+          error.message.includes('Too many requests') ||
+          error.message.includes('rate limit')
+        ) {
+          throw new Error(
+            'Too many attempts. Please wait 5 minutes and try again.',
+          );
         }
         if (error.message.includes('User not found')) {
-          throw new Error(`No account found with email ${cleanEmail}. Would you like to create a new account?`);
+          throw new Error(
+            `No account found with email ${cleanEmail}. Would you like to create a new account?`,
+          );
         }
         if (error.message.includes('signin is disabled')) {
-          throw new Error('Login is temporarily disabled. Please try again later.');
+          throw new Error(
+            'Login is temporarily disabled. Please try again later.',
+          );
         }
-        
+
         // Generic error fallback
         throw new Error(`Login failed: ${error.message}`);
       }
@@ -241,7 +279,10 @@ export const authService = {
   // Get current user
   async getCurrentUser() {
     try {
-      const { data: { user }, error } = await supabase.auth.getUser();
+      const {
+        data: { user },
+        error,
+      } = await supabase.auth.getUser();
       if (error) {
         console.error('Get user error:', error);
         return null;
@@ -256,7 +297,10 @@ export const authService = {
   // Get current session
   async getCurrentSession() {
     try {
-      const { data: { session }, error } = await supabase.auth.getSession();
+      const {
+        data: { session },
+        error,
+      } = await supabase.auth.getSession();
       if (error) {
         console.error('Get session error:', error);
         return null;
@@ -271,28 +315,32 @@ export const authService = {
   // Listen to auth changes
   onAuthStateChange(callback: (event: string, session: any) => void) {
     return supabase.auth.onAuthStateChange((event, session) => {
-      console.log('Auth state changed:', event, session?.user?.email || 'no user');
+      console.log(
+        'Auth state changed:',
+        event,
+        session?.user?.email || 'no user',
+      );
       callback(event, session);
     });
-  }
-}
+  },
+};
 
 // Helper function to get plant image URL
 export const getPlantImageUrl = (imagePath?: string): string => {
   if (!imagePath) {
-    return 'https://images.pexels.com/photos/1084199/pexels-photo-1084199.jpeg?auto=compress&cs=tinysrgb&w=400'
+    return 'https://images.pexels.com/photos/1084199/pexels-photo-1084199.jpeg?auto=compress&cs=tinysrgb&w=400';
   }
 
   if (imagePath.startsWith('http')) {
-    return imagePath
+    return imagePath;
   }
 
   const { data } = supabase.storage
     .from('plant-images')
-    .getPublicUrl(imagePath)
+    .getPublicUrl(imagePath);
 
-  return data.publicUrl
-}
+  return data.publicUrl;
+};
 
 // Storage debug service for development
 export const storageDebugService = {
@@ -300,59 +348,60 @@ export const storageDebugService = {
     try {
       const { data, error } = await supabase.storage
         .from('plant-images')
-        .list('', { limit: 100 })
-      
+        .list('', { limit: 100 });
+
       if (error) {
-        console.error('Storage list error:', error)
-        return []
+        console.error('Storage list error:', error);
+        return [];
       }
-      
-      console.log('Storage files:', data?.map(f => f.name) || [])
-      return data || []
+
+      console.log('Storage files:', data?.map((f) => f.name) || []);
+      return data || [];
     } catch (error) {
-      console.error('Storage debug error:', error)
-      return []
+      console.error('Storage debug error:', error);
+      return [];
     }
-  }
-}
+  },
+};
 
 // Plant image service for syncing
 export const plantImageService = {
   async syncPlantImages() {
     try {
-      const files = await storageDebugService.listFiles()
-      console.log(`Found ${files.length} files in storage`)
-      
+      const files = await storageDebugService.listFiles();
+      console.log(`Found ${files.length} files in storage`);
+
       // Update plants with correct image paths
       const { data: plants, error } = await supabase
         .from('plants')
         .select('id, name, image_path')
-        .is('image_path', null)
-      
+        .is('image_path', null);
+
       if (error) {
-        console.error('Error fetching plants for sync:', error)
-        return
+        console.error('Error fetching plants for sync:', error);
+        return;
       }
-      
-      console.log(`Found ${plants?.length || 0} plants without image paths`)
+
+      console.log(`Found ${plants?.length || 0} plants without image paths`);
     } catch (error) {
-      console.error('Image sync error:', error)
+      console.error('Image sync error:', error);
     }
-  }
-}
+  },
+};
 
 // Saved plants functions with proper authentication
 export const savedPlantsService = {
   async getSavedPlants(): Promise<SavedPlant[]> {
     try {
-      const user = await authService.getCurrentUser()
+      const user = await authService.getCurrentUser();
       if (!user) {
-        throw new Error('User not authenticated')
+        throw new Error('User not authenticated');
       }
 
       const { data, error } = await supabase
         .from('saved_plants')
-        .select(`
+        .select(
+          `
           *,
           plants (
             *,
@@ -360,27 +409,28 @@ export const savedPlantsService = {
               name
             )
           )
-        `)
+        `,
+        )
         .eq('user_id', user.id)
-        .order('saved_at', { ascending: false })
+        .order('saved_at', { ascending: false });
 
       if (error) {
-        console.error('Error fetching saved plants:', error)
-        throw error
+        console.error('Error fetching saved plants:', error);
+        throw error;
       }
 
-      return data || []
+      return data || [];
     } catch (error) {
-      console.error('Error in getSavedPlants:', error)
-      throw error
+      console.error('Error in getSavedPlants:', error);
+      throw error;
     }
   },
 
   async savePlant(plantId: number): Promise<void> {
     try {
-      const user = await authService.getCurrentUser()
+      const user = await authService.getCurrentUser();
       if (!user) {
-        throw new Error('User not authenticated')
+        throw new Error('User not authenticated');
       }
 
       // Check if plant is already saved
@@ -389,63 +439,61 @@ export const savedPlantsService = {
         .select('id')
         .eq('plant_id', plantId)
         .eq('user_id', user.id)
-        .single()
+        .single();
 
       if (existing) {
-        throw new Error('Plant is already saved')
+        throw new Error('Plant is already saved');
       }
 
-      const { error } = await supabase
-        .from('saved_plants')
-        .insert([
-          {
-            plant_id: plantId,
-            user_id: user.id,
-          }
-        ])
+      const { error } = await supabase.from('saved_plants').insert([
+        {
+          plant_id: plantId,
+          user_id: user.id,
+        },
+      ]);
 
       if (error) {
-        console.error('Error saving plant:', error)
-        throw error
+        console.error('Error saving plant:', error);
+        throw error;
       }
 
-      console.log(`Plant ${plantId} saved successfully for user ${user.id}`)
+      console.log(`Plant ${plantId} saved successfully for user ${user.id}`);
     } catch (error) {
-      console.error('Error saving plant:', error)
-      throw error
+      console.error('Error saving plant:', error);
+      throw error;
     }
   },
 
   async removePlant(plantId: number): Promise<void> {
     try {
-      const user = await authService.getCurrentUser()
+      const user = await authService.getCurrentUser();
       if (!user) {
-        throw new Error('User not authenticated')
+        throw new Error('User not authenticated');
       }
 
       const { error } = await supabase
         .from('saved_plants')
         .delete()
         .eq('plant_id', plantId)
-        .eq('user_id', user.id)
+        .eq('user_id', user.id);
 
       if (error) {
-        console.error('Error removing plant:', error)
-        throw error
+        console.error('Error removing plant:', error);
+        throw error;
       }
 
-      console.log(`Plant ${plantId} removed successfully for user ${user.id}`)
+      console.log(`Plant ${plantId} removed successfully for user ${user.id}`);
     } catch (error) {
-      console.error('Error removing plant:', error)
-      throw error
+      console.error('Error removing plant:', error);
+      throw error;
     }
   },
 
   async isPlantSaved(plantId: number): Promise<boolean> {
     try {
-      const user = await authService.getCurrentUser()
+      const user = await authService.getCurrentUser();
       if (!user) {
-        return false
+        return false;
       }
 
       const { data, error } = await supabase
@@ -453,83 +501,91 @@ export const savedPlantsService = {
         .select('id')
         .eq('plant_id', plantId)
         .eq('user_id', user.id)
-        .single()
+        .single();
 
       if (error && error.code !== 'PGRST116') {
-        console.error('Error checking if plant is saved:', error)
-        return false
+        console.error('Error checking if plant is saved:', error);
+        return false;
       }
 
-      return !!data
+      return !!data;
     } catch (error) {
-      console.error('Error checking if plant is saved:', error)
-      return false
+      console.error('Error checking if plant is saved:', error);
+      return false;
     }
-  }
-}
+  },
+};
 
 // Plant service functions
 export const plantService = {
   async getAllPlants(): Promise<Plant[]> {
     const { data, error } = await supabase
       .from('plants')
-      .select(`
+      .select(
+        `
         *,
         categories (
           name
         )
-      `)
-      .order('name')
+      `,
+      )
+      .order('name');
 
     if (error) {
-      console.error('Error fetching plants:', error)
-      throw error
+      console.error('Error fetching plants:', error);
+      throw error;
     }
 
-    return data || []
+    return data || [];
   },
 
   async searchPlants(searchTerm: string): Promise<Plant[]> {
     const { data, error } = await supabase
       .from('plants')
-      .select(`
+      .select(
+        `
         *,
         categories (
           name
         )
-      `)
-      .or(`name.ilike.%${searchTerm}%,scientific_name.ilike.%${searchTerm}%,description.ilike.%${searchTerm}%`)
+      `,
+      )
+      .or(
+        `name.ilike.%${searchTerm}%,scientific_name.ilike.%${searchTerm}%,description.ilike.%${searchTerm}%`,
+      )
       .order('name')
-      .limit(50)
+      .limit(50);
 
     if (error) {
-      console.error('Error searching plants:', error)
-      throw error
+      console.error('Error searching plants:', error);
+      throw error;
     }
 
-    return data || []
+    return data || [];
   },
 
   async getPlantById(id: number): Promise<Plant | null> {
     const { data, error } = await supabase
       .from('plants')
-      .select(`
+      .select(
+        `
         *,
         categories (
           name
         )
-      `)
+      `,
+      )
       .eq('id', id)
-      .single()
+      .single();
 
     if (error) {
-      console.error('Error fetching plant:', error)
-      return null
+      console.error('Error fetching plant:', error);
+      return null;
     }
 
-    return data
-  }
-}
+    return data;
+  },
+};
 
 // User profile service
 export const userProfileService = {
@@ -539,38 +595,41 @@ export const userProfileService = {
         .from('user_profiles')
         .select('*')
         .eq('user_id', userId)
-        .single()
+        .single();
 
       if (error) {
-        console.error('Error fetching user profile:', error)
-        return null
+        console.error('Error fetching user profile:', error);
+        return null;
       }
 
-      return data
+      return data;
     } catch (error) {
-      console.error('Error in getUserProfile:', error)
-      return null
+      console.error('Error in getUserProfile:', error);
+      return null;
     }
   },
 
-  async updateUserProfile(userId: string, updates: Partial<UserProfile>): Promise<UserProfile | null> {
+  async updateUserProfile(
+    userId: string,
+    updates: Partial<UserProfile>,
+  ): Promise<UserProfile | null> {
     try {
       const { data, error } = await supabase
         .from('user_profiles')
         .update(updates)
         .eq('user_id', userId)
         .select()
-        .single()
+        .single();
 
       if (error) {
-        console.error('Error updating user profile:', error)
-        throw error
+        console.error('Error updating user profile:', error);
+        throw error;
       }
 
-      return data
+      return data;
     } catch (error) {
-      console.error('Error in updateUserProfile:', error)
-      throw error
+      console.error('Error in updateUserProfile:', error);
+      throw error;
     }
-  }
-}
+  },
+};

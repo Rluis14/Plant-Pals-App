@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, StyleSheet, TouchableOpacity, Image, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import { useAuth } from '../../contexts/AuthContext';
-import { savedPlantsService } from '../../lib/supabase';
+import { useAuth } from '../../../contexts/AuthContext';
+import { savedPlantsService } from '../../../lib/supabase';
 
 interface Plant {
   id: number;
