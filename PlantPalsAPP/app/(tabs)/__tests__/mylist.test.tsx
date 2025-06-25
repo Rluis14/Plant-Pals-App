@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, StyleSheet, TouchableOpacity, Alert, ActivityIndicator, RefreshControl } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import { savedPlantsService, SavedPlant } from '../../lib/supabase';
-import PlantImage from '../../components/PlantImage';
+import { savedPlantsService, SavedPlant } from '../../../lib/supabase';
+import PlantImage from '../../../components/PlantImage';
 
 function MyListScreen() {
   const [savedPlants, setSavedPlants] = useState<SavedPlant[]>([]);

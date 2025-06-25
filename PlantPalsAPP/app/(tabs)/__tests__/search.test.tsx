@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TextInput, FlatList, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { Plant, savedPlantsService, plantService, storageDebugService, plantImageService } from '../../lib/supabase';
-import PlantImage from '../../components/PlantImage';
+import { Plant, savedPlantsService, plantService, storageDebugService, plantImageService } from '../../../lib/supabase';
+import PlantImage from '../../../components/PlantImage';
 
 function SearchScreen() {
   const [searchTerm, setSearchTerm] = useState('');

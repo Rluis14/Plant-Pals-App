@@ -2,9 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, Share, Linking, Platform, TouchableOpacity, Alert, ActionSheetIOS } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { Plant, savedPlantsService } from '../../lib/supabase';
-import { useAuth } from '../../contexts/AuthContext';
-import PlantImage from '../../components/PlantImage';
+import { Plant, savedPlantsService } from '../../../lib/supabase';
+import { useAuth } from '../../../contexts/AuthContext';
+import PlantImage from '../../../components/PlantImage';
 
 
 
