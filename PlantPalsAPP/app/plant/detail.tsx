@@ -3,10 +3,13 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert } from 'rea
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Plant, savedPlantsService } from '../../lib/supabase';
+import { useAuth } from '../../contexts/AuthContext';
+import PlantImage from '../../components/PlantImage';
 
 export default function PlantDetailScreen() {
   const { plant } = useLocalSearchParams();
   const router = useRouter();
+  const { user } = useAuth();
   const [plantDetails, setPlantDetails] = useState<Plant | null>(null);
   const [isSaved, setIsSaved] = useState(false);
   const [checkingStatus, setCheckingStatus] = useState(true);
@@ -28,6 +31,11 @@ export default function PlantDetailScreen() {
   }, [plant]);
 
   const checkSavedStatus = async (plantId: number) => {
+    if (!user) {
+      setCheckingStatus(false);
+      return;
+    }
+
     try {
       const saved = await savedPlantsService.isPlantSaved(plantId);
       setIsSaved(saved);
@@ -41,6 +49,18 @@ export default function PlantDetailScreen() {
   const handleSavePlant = async () => {
     if (!plantDetails) return;
 
+    if (!user) {
+      Alert.alert(
+        'Login Required',
+        'Please login to save plants to your collection.',
+        [
+          { text: 'Cancel', style: 'cancel' },
+          { text: 'Login', onPress: () => router.push('/_auth/login') }
+        ]
+      );
+      return;
+    }
+
     try {
       if (isSaved) {
         await savedPlantsService.removePlant(plantDetails.id);
@@ -51,11 +71,20 @@ export default function PlantDetailScreen() {
         setIsSaved(true);
         Alert.alert('Saved', `${plantDetails.name} has been added to your saved plants!`);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error saving/removing plant:', error);
-      if (error instanceof Error && error.message === 'Plant is already saved') {
+      if (error.message === 'Plant is already saved') {
         Alert.alert('Already Saved', `${plantDetails.name} is already in your saved plants.`);
         setIsSaved(true);
+      } else if (error.message === 'User not authenticated') {
+        Alert.alert(
+          'Login Required',
+          'Please login to save plants to your collection.',
+          [
+            { text: 'Cancel', style: 'cancel' },
+            { text: 'Login', onPress: () => router.push('/_auth/login') }
+          ]
+        );
       } else {
         Alert.alert('Error', 'Failed to save plant. Please try again.');
       }
@@ -69,17 +98,6 @@ export default function PlantDetailScreen() {
       </View>
     );
   }
-
-  const handleSetReminder = () => {
-    if (plantDetails.water_frequency_days) {
-      Alert.alert(
-        "Watering Reminder", 
-        `Reminder set! Water your ${plantDetails.name} every ${plantDetails.water_frequency_days} days.`
-      );
-    } else {
-      Alert.alert("Reminder", "Watering reminder set!");
-    }
-  };
 
   const handleGoBack = () => {
     router.back();
@@ -121,6 +139,15 @@ export default function PlantDetailScreen() {
       </View>
 
       <View style={styles.content}>
+        {/* Plant Image */}
+        <View style={styles.imageContainer}>
+          <PlantImage
+            imagePath={plantDetails.image_path}
+            style={styles.plantImage}
+            defaultSize={300}
+          />
+        </View>
+
         <View style={styles.titleSection}>
           <Text style={styles.title}>{plantDetails.name}</Text>
           {plantDetails.scientific_name && (
@@ -185,22 +212,17 @@ export default function PlantDetailScreen() {
         )}
 
         <View style={styles.actionButtons}>
-          <TouchableOpacity onPress={handleSetReminder} style={styles.primaryButton}>
-            <Ionicons name="alarm" size={20} color="#fff" />
-            <Text style={styles.primaryButtonText}>Set Watering Reminder</Text>
-          </TouchableOpacity>
-          
           <TouchableOpacity 
             onPress={handleSavePlant} 
-            style={[styles.secondaryButton, isSaved && styles.savedSecondaryButton]}
+            style={[styles.primaryButton, isSaved && styles.savedPrimaryButton]}
             disabled={checkingStatus}
           >
             <Ionicons 
               name={isSaved ? "heart" : "heart-outline"} 
               size={20} 
-              color="#000"
+              color="#fff"
             />
-            <Text style={[styles.secondaryButtonText, isSaved && styles.savedSecondaryButtonText]}>
+            <Text style={styles.primaryButtonText}>
               {isSaved ? 'Remove from My Plants' : 'Add to My Plants'}
             </Text>
           </TouchableOpacity>
@@ -244,6 +266,15 @@ const styles = StyleSheet.create({
   },
   content: {
     padding: 20,
+  },
+  imageContainer: {
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  plantImage: {
+    width: 300,
+    height: 300,
+    borderRadius: 16,
   },
   titleSection: {
     marginBottom: 20,
@@ -361,33 +392,14 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
     borderRadius: 12,
     gap: 8,
-    backgroundColor: '#000',
+    backgroundColor: '#2c6e49',
+  },
+  savedPrimaryButton: {
+    backgroundColor: '#e63946',
   },
   primaryButtonText: {
     fontSize: 16,
     fontWeight: '600',
     color: '#fff',
-  },
-  secondaryButton: {
-    borderWidth: 2,
-    borderColor: '#ccc',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 14,
-    borderRadius: 12,
-    gap: 8,
-    backgroundColor: '#fff',
-  },
-  savedSecondaryButton: {
-    borderColor: '#000',
-  },
-  secondaryButtonText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#000',
-  },
-  savedSecondaryButtonText: {
-    color: '#000',
   },
 });

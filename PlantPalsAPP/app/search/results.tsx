@@ -1,16 +1,14 @@
-// app/search/results.tsx
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, FlatList } from 'react-native';
-import { useLocalSearchParams, useNavigation } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import PlantCard from '../../components/PlantCard';
-import { supabase } from '@/lib/supbase'
-
+import { plantService, Plant } from '../../lib/supabase';
 
 export default function SearchResultsScreen() {
-  const [results, setResults] = useState([]);
+  const [results, setResults] = useState<Plant[]>([]);
   const [loading, setLoading] = useState(true);
   const params = useLocalSearchParams();
-  const navigation = useNavigation();
+  const router = useRouter();
   
   // Get search parameters
   const searchTerm = params.searchTerm || '';
@@ -20,45 +18,21 @@ export default function SearchResultsScreen() {
     setLoading(true);
     
     try {
-      let query = supabase
-        .from('plants')
-        .select(`
-          id, 
-          name,
-          scientific_name,
-          description,
-          water_frequency_days,
-          water_instructions,
-          light_requirements,
-          care_level,
-          image_path,
-          categories(name)
-        `)
-        .limit(20);
+      let plants: Plant[] = [];
 
       if (categoryId) {
-        // Search by category
-        query = query.eq('category_id', categoryId);
+        // Search by category - you'll need to implement this in plantService
+        plants = await plantService.getAllPlants();
+        plants = plants.filter(plant => plant.category_id === categoryId);
       } else if (searchTerm) {
         // Search by text
-        query = query.ilike('name', `%${searchTerm}%`);
+        plants = await plantService.searchPlants(searchTerm.toString());
       }
 
-      const { data, error } = await query;
-
-      if (error) throw error;
-
-      // Add image URLs
-      const plantsWithImages = data.map(plant => ({
-        ...plant,
-        image_url: supabase.storage
-          .from('plant_images')
-          .getPublicUrl(plant.image_path).data.publicUrl
-      }));
-
-      setResults(plantsWithImages);
+      setResults(plants);
     } catch (error) {
       console.error('Search error:', error);
+      setResults([]);
     } finally {
       setLoading(false);
     }
@@ -67,6 +41,13 @@ export default function SearchResultsScreen() {
   useEffect(() => {
     fetchResults();
   }, [searchTerm, categoryId]);
+
+  const handlePlantPress = (plant: Plant) => {
+    router.push({
+      pathname: '/plant/detail',
+      params: { plant: encodeURIComponent(JSON.stringify(plant)) }
+    });
+  };
 
   return (
     <View style={styles.container}>
@@ -85,7 +66,7 @@ export default function SearchResultsScreen() {
           renderItem={({ item }) => (
             <PlantCard 
               plant={item} 
-              onPress={() => navigation.navigate('plant/detail', { plant: item })}
+              onPress={() => handlePlantPress(item)}
             />
           )}
           ListEmptyComponent={
@@ -110,6 +91,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 16,
     marginTop: 8,
+    color: '#333',
   },
   listContent: {
     paddingBottom: 20,
