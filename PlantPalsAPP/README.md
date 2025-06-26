@@ -35,3 +35,5 @@
     1. Babel file is unabled to install.
     2. Incompatiable verson of react and react-native-render
     
+### Link to presentation
+    https://bellevuec-my.sharepoint.com/:p:/g/personal/anh_t_pham_bellevuecollege_edu/EU9VahoTZmtAgHeCp6P0BQcBf61URMUrHJGe4RKqi0Ebeg?e=fP8W1C
