@@ -37,7 +37,7 @@ export default function MyListScreen() {
     
     try {
       setLoading(true);
-      const data = await savedPlantsService.getSavedPlants();
+      const data = await savedPlantsService.getUserSavedPlants(user.id);
       setSavedPlants(data || []);
     } catch (error) {
       console.error('Failed to fetch saved plants:', error);
@@ -67,7 +67,7 @@ export default function MyListScreen() {
           style: 'destructive',
           onPress: async () => {
             try {
-              await savedPlantsService.removePlant(plantId);
+              await savedPlantsService.removeSavedPlant(user.id, plantId);
               setSavedPlants(prev => prev.filter(item => item.id !== savedPlantId));
             } catch (error) {
               console.error('Failed to remove plant:', error);

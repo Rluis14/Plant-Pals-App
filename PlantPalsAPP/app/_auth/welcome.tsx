@@ -37,13 +37,13 @@ const WelcomeScreen = () => {
           </View>
           
           <View style={styles.featureCard}>
-            <Ionicons name="list" size={40} color="#2F684E" style={styles.featureIcon} />
-            <Text style={styles.featureText}>Care guide for each plant</Text>
+            <Ionicons name="water" size={40} color="#2F684E" style={styles.featureIcon} />
+            <Text style={styles.featureText}>Smart watering reminders</Text>
           </View>
           
           <View style={styles.featureCard}>
-            <Ionicons name="cloud" size={40} color="#2F684E" style={styles.featureIcon} />
-            <Text style={styles.featureText}>Keep track of the weather</Text>
+            <Ionicons name="people" size={40} color="#2F684E" style={styles.featureIcon} />
+            <Text style={styles.featureText}>Connect with plant lovers</Text>
           </View>
         </View>
 

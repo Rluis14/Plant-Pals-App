@@ -1,12 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, Share, Linking, Platform, TouchableOpacity, Alert, ActionSheetIOS } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Plant, savedPlantsService } from '../../lib/supabase';
 import { useAuth } from '../../contexts/AuthContext';
 import PlantImage from '../../components/PlantImage';
-
-
 
 export default function PlantDetailScreen() {
   const { plant } = useLocalSearchParams();
@@ -15,7 +13,6 @@ export default function PlantDetailScreen() {
   const [plantDetails, setPlantDetails] = useState<Plant | null>(null);
   const [isSaved, setIsSaved] = useState(false);
   const [checkingStatus, setCheckingStatus] = useState(true);
-
 
   useEffect(() => {
     if (plant) {
@@ -32,8 +29,6 @@ export default function PlantDetailScreen() {
       }
     }
   }, [plant]);
-
-  
 
   const checkSavedStatus = async (plantId: number) => {
     if (!user) {
@@ -104,59 +99,6 @@ export default function PlantDetailScreen() {
     );
   }
 
-
-  // share button functionality
-  const message = `Check out this plant: ${plantDetails.name} (${plantDetails.scientific_name || 'No scientific name available'})\n\nDescription: ${plantDetails.description || 'No description available.'}\n\nWatering Frequency: Every ${plantDetails.water_frequency_days || 'N/A'} days\nLight Requirements: ${plantDetails.light_requirements || 'N/A'}`;
-
-  const shareSystem = async () => {
-    try {
-      await Share.share({message});
-    } catch (error) {
-      console.error('Error sharing plant:', error);
-      Alert.alert('Error', 'Could not share plant details. Please try again.');
-  }
-  };
-
-  const shareSMS = () => {
-    const smsURL = `sms:?body=${encodeURIComponent(message)}`;
-    Linking.openURL(smsURL).catch((error) => 
-      Alert.alert('Error', 'Could not open SMS app. Please try again.')
-    );
-  };
-
-  
-  const handleSharePlant =  () => {
-    const options = ['System Share', 'SMS', 'Cancel'];
-    const actions = [shareSystem, shareSMS];
-    
-    if (Platform.OS === 'ios') {
-      ActionSheetIOS.showActionSheetWithOptions(
-        {
-          options, 
-          cancelButtonIndex: 2
-        },
-        (buttonIndex) => {
-          if (buttonIndex !== 2) {
-            actions[buttonIndex]();
-          }
-        }
-      );
-    }else {
-      Alert.alert(
-        'Share Plant',
-        'Choose how you want to share this plant:',
-        [
-          { text: 'System Share', onPress: shareSystem },
-          { text: 'SMS', onPress: shareSMS },
-          { text: 'Cancel', style: 'cancel' }
-        ],
-        {cancelable: true}
-      );
-    }
-};
-
-  
-
   const handleGoBack = () => {
     router.back();
   };
@@ -175,7 +117,7 @@ export default function PlantDetailScreen() {
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
       <View style={styles.header}>
         <TouchableOpacity style={styles.backButton} onPress={handleGoBack}>
-          <Ionicons name="arrow-back" size={24} color="#2F684E" />
+          <Ionicons name="arrow-back" size={24} color="#000" />
         </TouchableOpacity>
         
         <View style={styles.headerActions}>
@@ -187,17 +129,11 @@ export default function PlantDetailScreen() {
             <Ionicons 
               name={isSaved ? "heart" : "heart-outline"} 
               size={24} 
-              color="#2F684E"
+              color="#000"
             />
           </TouchableOpacity>
-
-          <TouchableOpacity style={styles.headerActionButton} onPress={handleSharePlant}>
-            <Ionicons name="share-outline" size={24} color="#000" />
-          </TouchableOpacity>
-
           <TouchableOpacity style={styles.headerActionButton}>
-            <Ionicons name="share-outline" size={24} color="#2F684E" />
-
+            <Ionicons name="share-outline" size={24} color="#000" />
           </TouchableOpacity>
         </View>
       </View>
@@ -221,7 +157,7 @@ export default function PlantDetailScreen() {
           <View style={styles.tagsContainer}>
             {plantDetails.categories?.name && (
               <View style={styles.categoryTag}>
-                <Ionicons name="leaf" size={14} color="#fff" />
+                <Ionicons name="leaf" size={14} color="#000" />
                 <Text style={styles.categoryText}>{plantDetails.categories.name}</Text>
               </View>
             )}
@@ -244,7 +180,7 @@ export default function PlantDetailScreen() {
           {plantDetails.water_frequency_days && (
             <View style={styles.careInfoCard}>
               <View style={styles.careInfoHeader}>
-                <Ionicons name="water" size={24} color="#66D9EF" />
+                <Ionicons name="water" size={24} color="#000" />
                 <Text style={styles.careInfoTitle}>Watering</Text>
               </View>
               <Text style={styles.careInfoValue}>Every {plantDetails.water_frequency_days} days</Text>
@@ -257,7 +193,7 @@ export default function PlantDetailScreen() {
           {plantDetails.light_requirements && (
             <View style={styles.careInfoCard}>
               <View style={styles.careInfoHeader}>
-                <Ionicons name={getLightIcon(plantDetails.light_requirements)} size={24} color="#fff" />
+                <Ionicons name={getLightIcon(plantDetails.light_requirements)} size={24} color="#000" />
                 <Text style={styles.careInfoTitle}>Light</Text>
               </View>
               <Text style={styles.careInfoValue}>{plantDetails.light_requirements} light</Text>
@@ -269,16 +205,13 @@ export default function PlantDetailScreen() {
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Care Instructions</Text>
             <View style={styles.instructionItem}>
-              <Ionicons name="water" size={20} color="#66D9EF" />
+              <Ionicons name="water" size={20} color="#000" />
               <Text style={styles.instructionText}>{plantDetails.water_instructions}</Text>
             </View>
           </View>
         )}
 
         <View style={styles.actionButtons}>
-
-
-
           <TouchableOpacity 
             onPress={handleSavePlant} 
             style={[styles.primaryButton, isSaved && styles.savedPrimaryButton]}
@@ -302,7 +235,7 @@ export default function PlantDetailScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#E6F2EA',
+    backgroundColor: '#fff',
   },
   center: {
     flex: 1,
@@ -320,7 +253,6 @@ const styles = StyleSheet.create({
     paddingTop: 50,
     paddingHorizontal: 20,
     paddingBottom: 10,
-    
   },
   backButton: {
     padding: 8,
@@ -351,13 +283,13 @@ const styles = StyleSheet.create({
     fontSize: 28,
     fontWeight: 'bold',
     marginBottom: 8,
-    color: '#2F684E',
+    color: '#000',
   },
   scientificName: {
     fontSize: 16,
     fontStyle: 'italic',
     marginBottom: 12,
-    color: '#A67B5B',
+    color: '#000',
   },
   tagsContainer: {
     flexDirection: 'row',
@@ -371,23 +303,23 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
     borderRadius: 16,
     gap: 4,
-    backgroundColor: '#2F684E',
+    backgroundColor: '#f0f0f0',
   },
   categoryText: {
     fontSize: 14,
     fontWeight: '500',
-    color: '#fff',
+    color: '#000',
   },
   careLevelTag: {
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 16,
-    backgroundColor: '#2F684E',
+    backgroundColor: '#f0f0f0',
   },
   careLevelText: {
     fontSize: 14,
     fontWeight: '500',
-    color: '#fff',
+    color: '#000',
   },
   section: {
     marginBottom: 24,
@@ -396,12 +328,12 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: '600',
     marginBottom: 12,
-    color: '#2F684E',
+    color: '#000',
   },
   description: {
     fontSize: 16,
     lineHeight: 24,
-    color: '#A67B5B',
+    color: '#000',
   },
   careInfoContainer: {
     marginBottom: 24,
@@ -411,12 +343,11 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     marginBottom: 12,
     borderLeftWidth: 4,
-    borderLeftColor: '#A67B5B',
-    backgroundColor: '#2F684E',
+    borderLeftColor: '#ccc',
+    backgroundColor: '#f9f9f9',
   },
   careInfoHeader: {
     flexDirection: 'row',
-    fontFamily: 'SpaceMono',
     alignItems: 'center',
     marginBottom: 8,
     gap: 8,
@@ -424,21 +355,18 @@ const styles = StyleSheet.create({
   careInfoTitle: {
     fontSize: 16,
     fontWeight: '600',
-    fontFamily: 'SpaceMono',
-    color: '#fff',
+    color: '#000',
   },
   careInfoValue: {
     fontSize: 18,
     fontWeight: 'bold',
-    fontFamily: 'SpaceMono',
     marginBottom: 4,
-    color: '#fff',
+    color: '#000',
   },
   careInfoDescription: {
     fontSize: 14,
-    fontFamily: 'SpaceMono',
     lineHeight: 20,
-    color: '#fff',
+    color: '#000',
   },
   instructionItem: {
     flexDirection: 'row',
@@ -450,7 +378,7 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 16,
     lineHeight: 22,
-    color: '#A67B5B',
+    color: '#000',
   },
   actionButtons: {
     gap: 12,

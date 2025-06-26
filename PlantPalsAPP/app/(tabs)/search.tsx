@@ -128,15 +128,11 @@ function SearchScreen() {
             {item.scientific_name && (
               <Text style={styles.scientificName}>{item.scientific_name}</Text>
             )}
-
-            
-
             {item.description && (
               <Text style={styles.resultDescription} numberOfLines={2}>
                 {item.description}
               </Text>
             )}
-            
             <View style={styles.plantMeta}>
               {item.categories?.name && (
                 <View style={styles.categoryTag}>
@@ -148,7 +144,12 @@ function SearchScreen() {
                   <Text style={styles.careLevelText}>{item.care_level}</Text>
                 </View>
               )}
-              
+              {item.water_frequency_days && (
+                <View style={styles.waterTag}>
+                  <Ionicons name="water" size={12} color="#000" />
+                  <Text style={styles.waterText}>{item.water_frequency_days}d</Text>
+                </View>
+              )}
             </View>
           </View>
         </TouchableOpacity>
@@ -161,11 +162,11 @@ function SearchScreen() {
             <Ionicons 
               name={isSaved ? "heart" : "heart-outline"} 
               size={20} 
-              color="#fff"
+              color="#000"
             />
           </TouchableOpacity>
           <TouchableOpacity onPress={() => handlePlantSelect(item)} style={styles.viewButton}>
-            <Ionicons name="chevron-forward" size={20} color="#2F684E" />
+            <Ionicons name="chevron-forward" size={20} color="#000" />
           </TouchableOpacity>
         </View>
       </View>
@@ -231,7 +232,7 @@ function SearchScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#E6F2EA',
+    backgroundColor: '#fff',
     paddingTop: 60,
     paddingHorizontal: 20,
   },
@@ -242,13 +243,13 @@ const styles = StyleSheet.create({
   header: {
     fontSize: 24,
     fontWeight: '600',
-    color: '#2F684E',
+    color: '#000',
   },
   instructions: {
     fontSize: 16,
     marginBottom: 20,
     textAlign: 'center',
-    color: '#A67B5B',
+    color: '#000',
   },
   searchContainer: {
     marginBottom: 20,
@@ -281,7 +282,7 @@ const styles = StyleSheet.create({
   loadingText: {
     marginTop: 10,
     fontSize: 16,
-    color: '#2F684E',
+    color: '#000',
   },
   resultItem: {
     flexDirection: 'row',
@@ -309,19 +310,19 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '600',
     marginBottom: 4,
-    color: '#2F684E',
+    color: '#000',
   },
   scientificName: {
     fontSize: 14,
     fontStyle: 'italic',
     marginBottom: 6,
-    color: '#2F684E',
+    color: '#000',
   },
   resultDescription: {
     fontSize: 14,
     lineHeight: 20,
     marginBottom: 8,
-    color: '#A67B5B',
+    color: '#000',
   },
   plantMeta: {
     flexDirection: 'row',
@@ -332,23 +333,23 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 12,
-    backgroundColor: '#2F684E',
+    backgroundColor: '#f0f0f0',
   },
   categoryText: {
     fontSize: 12,
     fontWeight: '500',
-    color: '#fff',
+    color: '#000',
   },
   careLevelTag: {
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 12,
-    backgroundColor: '#2F684E',
+    backgroundColor: '#f0f0f0',
   },
   careLevelText: {
     fontSize: 12,
     fontWeight: '500',
-    color: '#fff',
+    color: '#000',
   },
   waterTag: {
     flexDirection: 'row',
@@ -357,12 +358,12 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
     borderRadius: 12,
     gap: 3,
-    backgroundColor: '#2F684E',
+    backgroundColor: '#f0f0f0',
   },
   waterText: {
     fontSize: 12,
     fontWeight: '500',
-    color: '#fff',
+    color: '#000',
   },
   actions: {
     flexDirection: 'row',
@@ -371,13 +372,13 @@ const styles = StyleSheet.create({
   },
   saveButton: {
     borderWidth: 2,
-    borderColor: '#2F684E',
+    borderColor: '#ccc',
     borderRadius: 20,
     width: 40,
     height: 40,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#2F684E',
+    backgroundColor: '#fff',
   },
   savedButton: {
     borderColor: '#000',
@@ -389,7 +390,7 @@ const styles = StyleSheet.create({
     marginTop: 40,
     textAlign: 'center',
     fontSize: 16,
-    color: '#2F684E',
+    color: '#000',
   },
 });
 

@@ -86,7 +86,7 @@ function MyListScreen() {
           <View style={styles.plantMeta}>
             {item.plants.categories?.name && (
               <View style={styles.categoryTag}>
-                <Ionicons name="leaf" size={12} color="#2F684E" />
+                <Ionicons name="leaf" size={12} color="#000" />
                 <Text style={styles.categoryText}>{item.plants.categories.name}</Text>
               </View>
             )}
@@ -95,7 +95,12 @@ function MyListScreen() {
                 <Text style={styles.careLevelText}>{item.plants.care_level}</Text>
               </View>
             )}
-            
+            {item.plants.water_frequency_days && (
+              <View style={styles.waterTag}>
+                <Ionicons name="water" size={12} color="#000" />
+                <Text style={styles.waterText}>{item.plants.water_frequency_days}d</Text>
+              </View>
+            )}
           </View>
           <Text style={styles.savedDate}>
             Saved {new Date(item.saved_at).toLocaleDateString()}
@@ -121,7 +126,7 @@ function MyListScreen() {
           <Text style={styles.header}>My Saved Plants</Text>
         </View>
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#2F684E" />
+          <ActivityIndicator size="large" color="#000" />
           <Text style={styles.loadingText}>Loading your plants...</Text>
         </View>
       </View>
@@ -148,7 +153,7 @@ function MyListScreen() {
         }
         ListEmptyComponent={
           <View style={styles.emptyContainer}>
-            <Ionicons name="leaf-outline" size={64} color="#2F684E" />
+            <Ionicons name="leaf-outline" size={64} color="#000" />
             <Text style={styles.emptyTitle}>No saved plants yet</Text>
             <Text style={styles.emptySubtitle}>
               Search for plants and add them to your collection to see them here
@@ -157,7 +162,7 @@ function MyListScreen() {
               style={styles.searchButton}
               onPress={() => router.push('/(tabs)/search')}
             >
-              <Ionicons name="search" size={20} color="#fff" />
+              <Ionicons name="search" size={20} color="#000" />
               <Text style={styles.searchButtonText}>Start Searching</Text>
             </TouchableOpacity>
           </View>
@@ -170,7 +175,7 @@ function MyListScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#E6F2EA',
+    backgroundColor: '#fff',
     paddingTop: 60,
     paddingHorizontal: 20,
   },
@@ -181,12 +186,12 @@ const styles = StyleSheet.create({
   header: {
     fontSize: 24,
     fontWeight: '600',
-    color: '#2F684E',
+    color: '#000',
   },
   subHeader: {
     fontSize: 14,
     marginTop: 4,
-    color: '#2F684E',
+    color: '#000',
   },
   loadingContainer: {
     flex: 1,
@@ -196,7 +201,7 @@ const styles = StyleSheet.create({
   loadingText: {
     marginTop: 10,
     fontSize: 16,
-    color: '#2F684E',
+    color: '#000',
   },
   plantItem: {
     flexDirection: 'row',
@@ -225,7 +230,7 @@ const styles = StyleSheet.create({
     fontSize: 17,
     fontWeight: '600',
     marginBottom: 3,
-    color: '#2F684E',
+    color: '#000',
   },
   scientificName: {
     fontSize: 13,
@@ -323,12 +328,12 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     borderRadius: 25,
     gap: 8,
-    backgroundColor: '#2F684E',
+    backgroundColor: '#f0f0f0',
   },
   searchButtonText: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#fff',
+    color: '#000',
   },
 });
 
