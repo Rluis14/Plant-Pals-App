@@ -14,7 +14,7 @@
 - Update Home Feature Screen since we remove the trending page
 - Debugg all the errors
     
-
+    
 ## Bugs or Blockers
 - testing bugs
 - Login authentication
